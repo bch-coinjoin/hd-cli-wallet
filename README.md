@@ -1,6 +1,6 @@
 _Warning: This is an experimental 'hacker-friendly' wallet. It's intended for use by software developers. It has been tested only for the most common use-cases. It has been known to burn SLP tokens. Do not use this wallet for tokens with value._
 
-# slp-cli-wallet
+# hd-cli-wallet
 
 This is an npm library and Bitcoin Cash (BCH) wallet that runs on the command
 line. Add this library to your app to instantly give it the ability to transact
