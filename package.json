@@ -1,7 +1,7 @@
 {
   "name": "hd-cli-wallet",
   "description": "npm lib and CLI app for working with HD wallets ",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "author": "Chris Troutner <chris.troutner@gmail.com>",
   "bin": {
     "hd-cli-wallet": "./bin/run"
