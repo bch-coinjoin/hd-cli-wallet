@@ -1,20 +1,13 @@
-_Warning: This is an experimental 'hacker-friendly' wallet. It's intended for use by software developers. It has been tested only for the most common use-cases. It has been known to burn SLP tokens. Do not use this wallet for tokens with value._
-
 # hd-cli-wallet
 
-This is an npm library and Bitcoin Cash (BCH) wallet that runs on the command
-line. Add this library to your app to instantly give it the ability to transact
-on the BCH network! New to Bitcoin Cash? Find educational resources on the [FullStack.cash Documenation page](https://fullstack.cash/documentation).
+This JavaScript library is several things in one:
+- A Bitcoin Cash (BCH) HD wallet
+- A command line interface (CLI) application
+- A npm library
 
-This project has the following goals:
+This app can be run from source to generate wallets, send, and receive BCH. It has hooks to interface with [colab-coinjoin-api](https://github.com/bch-coinjoin/colab-coinjoin-api) in order to preserve privacy by anonymizing your BCH using the [Collaborative CoinJoin protocol](https://github.com/Permissionless-Software-Foundation/specifications/blob/master/ps004-collaborative-coinjoin.md).
 
-- Create a code base for a wallet that is easily forkable and extensible by JavaScript developers.
-- Provide a high-level abstraction to make it easy for new developers to add BCH and SLP wallet functionality into their apps.
-
-If you want a wallet with a graphical user interface, check out [wallet.FullStack.cash](https://wallet.fullstack.cash). For a front-end friendly package, check out [minimal-slp-wallet-web](https://www.npmjs.com/package/minimal-slp-wallet-web). Bitcoin Cash functionality is implemented in all wallets with [bch-js](https://www.npmjs.com/package/@psf/bch-js), provided by [FullStack.cash](https://fullstack.cash). The command line interface for this project is built with [oclif](https://oclif.io).
-
-Also, be sure to check out the design decisions and trade-offs that went into the
-creation of this project in the [docs directory](./docs)
+This code is also compiled into a the [hd-cli-wallet npm library](https://www.npmjs.com/package/hd-cli-wallet). This library is included into the [electron-bch-coinjoin-wallet](https://github.com/bch-coinjoin/electron-bch-coinjoin-wallet) desktop application, in order to provide a BCH wallet with a graphical user interface (GUI).
 
 <!-- toc -->
 * [hd-cli-wallet](#hd-cli-wallet)
@@ -26,14 +19,14 @@ creation of this project in the [docs directory](./docs)
 
 # NPM Usage
 
-The [npm library](https://www.npmjs.com/package/slp-cli-wallet) can be included
+The [npm library](https://www.npmjs.com/package/hd-cli-wallet) can be included
 in your own app to instantly give it the ability to send and receive BCH transactions, including SLP tokens.
 Here is an example of how to include it in your own app. This example will generate
 a new HD wallet.
 
 ```javascript
 // Instantiate the Create Wallet class from this library.
-const CreateWallet = require('slp-cli-wallet/src/commands/create-wallet')
+const CreateWallet = require('hd-cli-wallet')
 const createWallet = new CreateWallet()
 
 const walletFile = './wallet.json'
@@ -50,8 +43,8 @@ makeNewWallet()
 
 This app is tested on the following versions for npm and node.js:
 
-- npm: v7.12.1
-- node.js: v14.16.1
+- npm: v16.19.0
+- node.js: v8.19.3
 
 # Install Dev Environment
 
