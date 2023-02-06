@@ -17,7 +17,7 @@ Also, be sure to check out the design decisions and trade-offs that went into th
 creation of this project in the [docs directory](./docs)
 
 <!-- toc -->
-* [slp-cli-wallet](#slp-cli-wallet)
+* [hd-cli-wallet](#hd-cli-wallet)
 * [NPM Usage](#npm-usage)
 * [Install Dev Environment](#install-dev-environment)
 * [Command Line Usage](#command-line-usage)
@@ -70,14 +70,14 @@ by making changes to the code in the [src/commands](src/commands) directory.
 
 <!-- usage -->
 ```sh-session
-$ npm install -g slp-cli-wallet
-$ slp-cli-wallet COMMAND
+$ npm install -g hd-cli-wallet
+$ hd-cli-wallet COMMAND
 running command...
-$ slp-cli-wallet (-v|--version|version)
-slp-cli-wallet/3.0.0 darwin-x64 node-v12.16.1
-$ slp-cli-wallet --help [COMMAND]
+$ hd-cli-wallet (-v|--version|version)
+hd-cli-wallet/1.0.1 linux-x64 node-v16.19.0
+$ hd-cli-wallet --help [COMMAND]
 USAGE
-  $ slp-cli-wallet COMMAND
+  $ hd-cli-wallet COMMAND
 ...
 ```
 <!-- usagestop -->
@@ -85,34 +85,35 @@ USAGE
 # Commands
 
 <!-- commands -->
-* [`slp-cli-wallet burn-tokens`](#slp-cli-wallet-burn-tokens)
-* [`slp-cli-wallet create-wallet`](#slp-cli-wallet-create-wallet)
-* [`slp-cli-wallet derivation`](#slp-cli-wallet-derivation)
-* [`slp-cli-wallet get-address`](#slp-cli-wallet-get-address)
-* [`slp-cli-wallet get-key`](#slp-cli-wallet-get-key)
-* [`slp-cli-wallet help [COMMAND]`](#slp-cli-wallet-help-command)
-* [`slp-cli-wallet list-wallets`](#slp-cli-wallet-list-wallets)
-* [`slp-cli-wallet nft-list-addr`](#slp-cli-wallet-nft-list-addr)
-* [`slp-cli-wallet nft-list-tokens`](#slp-cli-wallet-nft-list-tokens)
-* [`slp-cli-wallet nft-create-child`](#slp-cli-wallet-nft-create-child)
-* [`slp-cli-wallet nft-create-group`](#slp-cli-wallet-nft-create-group)
-* [`slp-cli-wallet nft-remove-child`](#slp-cli-wallet-nft-remove-child)
-* [`slp-cli-wallet remove-wallet`](#slp-cli-wallet-remove-wallet)
-* [`slp-cli-wallet scan-funds`](#slp-cli-wallet-scan-funds)
-* [`slp-cli-wallet send`](#slp-cli-wallet-send)
-* [`slp-cli-wallet send-all`](#slp-cli-wallet-send-all)
-* [`slp-cli-wallet send-tokens`](#slp-cli-wallet-send-tokens)
-* [`slp-cli-wallet sign-message`](#slp-cli-wallet-sign-message)
-* [`slp-cli-wallet sweep`](#slp-cli-wallet-sweep)
-* [`slp-cli-wallet update-balances`](#slp-cli-wallet-update-balances)
+* [`hd-cli-wallet burn-tokens`](#hd-cli-wallet-burn-tokens)
+* [`hd-cli-wallet create-wallet`](#hd-cli-wallet-create-wallet)
+* [`hd-cli-wallet derivation`](#hd-cli-wallet-derivation)
+* [`hd-cli-wallet get-address`](#hd-cli-wallet-get-address)
+* [`hd-cli-wallet get-key`](#hd-cli-wallet-get-key)
+* [`hd-cli-wallet help [COMMAND]`](#hd-cli-wallet-help-command)
+* [`hd-cli-wallet list-wallets`](#hd-cli-wallet-list-wallets)
+* [`hd-cli-wallet nft-create-child`](#hd-cli-wallet-nft-create-child)
+* [`hd-cli-wallet nft-create-group`](#hd-cli-wallet-nft-create-group)
+* [`hd-cli-wallet nft-list-addr`](#hd-cli-wallet-nft-list-addr)
+* [`hd-cli-wallet nft-list-tokens`](#hd-cli-wallet-nft-list-tokens)
+* [`hd-cli-wallet nft-remove-child`](#hd-cli-wallet-nft-remove-child)
+* [`hd-cli-wallet remove-wallet`](#hd-cli-wallet-remove-wallet)
+* [`hd-cli-wallet scan-funds`](#hd-cli-wallet-scan-funds)
+* [`hd-cli-wallet send`](#hd-cli-wallet-send)
+* [`hd-cli-wallet send-all`](#hd-cli-wallet-send-all)
+* [`hd-cli-wallet send-tokens`](#hd-cli-wallet-send-tokens)
+* [`hd-cli-wallet sign-message`](#hd-cli-wallet-sign-message)
+* [`hd-cli-wallet slp-avax-bridge`](#hd-cli-wallet-slp-avax-bridge)
+* [`hd-cli-wallet sweep`](#hd-cli-wallet-sweep)
+* [`hd-cli-wallet update-balances`](#hd-cli-wallet-update-balances)
 
-## `slp-cli-wallet burn-tokens`
+## `hd-cli-wallet burn-tokens`
 
 Burn SLP tokens.
 
 ```
 USAGE
-  $ slp-cli-wallet burn-tokens
+  $ hd-cli-wallet burn-tokens
 
 OPTIONS
   -n, --name=name        Name of wallet
@@ -120,15 +121,15 @@ OPTIONS
   -t, --tokenId=tokenId  Token ID
 ```
 
-_See code: [src/commands/burn-tokens.js](https://github.com/Permissionless-Software-Foundation/slp-cli-wallet/blob/v3.0.0/src/commands/burn-tokens.js)_
+_See code: [src/commands/burn-tokens.js](https://github.com/bch-coinjoin/hd-cli-wallet/blob/v1.0.1/src/commands/burn-tokens.js)_
 
-## `slp-cli-wallet create-wallet`
+## `hd-cli-wallet create-wallet`
 
 Generate a new HD Wallet.
 
 ```
 USAGE
-  $ slp-cli-wallet create-wallet
+  $ hd-cli-wallet create-wallet
 
 OPTIONS
   -d, --description=description  Description of the wallet
@@ -136,15 +137,15 @@ OPTIONS
   -t, --testnet                  Create a testnet wallet
 ```
 
-_See code: [src/commands/create-wallet.js](https://github.com/Permissionless-Software-Foundation/slp-cli-wallet/blob/v3.0.0/src/commands/create-wallet.js)_
+_See code: [src/commands/create-wallet.js](https://github.com/bch-coinjoin/hd-cli-wallet/blob/v1.0.1/src/commands/create-wallet.js)_
 
-## `slp-cli-wallet derivation`
+## `hd-cli-wallet derivation`
 
 Display or set the derivation path used by the wallet.
 
 ```
 USAGE
-  $ slp-cli-wallet derivation
+  $ hd-cli-wallet derivation
 
 OPTIONS
   -n, --name=name  name to print
@@ -162,15 +163,15 @@ DESCRIPTION
   Wallets use the 245 derivation path by default.
 ```
 
-_See code: [src/commands/derivation.js](https://github.com/Permissionless-Software-Foundation/slp-cli-wallet/blob/v3.0.0/src/commands/derivation.js)_
+_See code: [src/commands/derivation.js](https://github.com/bch-coinjoin/hd-cli-wallet/blob/v1.0.1/src/commands/derivation.js)_
 
-## `slp-cli-wallet get-address`
+## `hd-cli-wallet get-address`
 
 Generate a new address to recieve BCH.
 
 ```
 USAGE
-  $ slp-cli-wallet get-address
+  $ hd-cli-wallet get-address
 
 OPTIONS
   -n, --name=name  Name of wallet
@@ -178,30 +179,29 @@ OPTIONS
   -t, --testnet    Create a testnet wallet
 ```
 
-_See code: [src/commands/get-address.js](https://github.com/Permissionless-Software-Foundation/slp-cli-wallet/blob/v3.0.0/src/commands/get-address.js)_
+_See code: [src/commands/get-address.js](https://github.com/bch-coinjoin/hd-cli-wallet/blob/v1.0.1/src/commands/get-address.js)_
 
-## `slp-cli-wallet get-key`
+## `hd-cli-wallet get-key`
 
 Generate a new private/public key pair.
 
 ```
 USAGE
-  $ slp-cli-wallet get-key
+  $ hd-cli-wallet get-key
 
 OPTIONS
   -n, --name=name  Name of wallet
 ```
 
-_See code: [src/commands/get-key.js](https://github.com/Permissionless-Software-Foundation/slp-cli-wallet/blob/v3.0.0/src/commands/get-key.js)_
+_See code: [src/commands/get-key.js](https://github.com/bch-coinjoin/hd-cli-wallet/blob/v1.0.1/src/commands/get-key.js)_
 
+## `hd-cli-wallet help [COMMAND]`
 
-## `slp-cli-wallet help [COMMAND]`
-
-display help for slp-cli-wallet
+display help for hd-cli-wallet
 
 ```
 USAGE
-  $ slp-cli-wallet help [COMMAND]
+  $ hd-cli-wallet help [COMMAND]
 
 ARGUMENTS
   COMMAND  command to show help for
@@ -212,62 +212,24 @@ OPTIONS
 
 _See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v3.2.2/src/commands/help.ts)_
 
-## `slp-cli-wallet list-wallets`
+## `hd-cli-wallet list-wallets`
 
 List existing wallets.
 
 ```
 USAGE
-  $ slp-cli-wallet list-wallets
+  $ hd-cli-wallet list-wallets
 ```
 
-_See code: [src/commands/list-wallets.js](https://github.com/Permissionless-Software-Foundation/slp-cli-wallet/blob/v3.0.0/src/commands/list-wallets.js)_
+_See code: [src/commands/list-wallets.js](https://github.com/bch-coinjoin/hd-cli-wallet/blob/v1.0.1/src/commands/list-wallets.js)_
 
-## `slp-cli-wallet nft-list-addr`
-
-List addresses inside the wallet
-
-```
-USAGE
-  $ slp-cli-wallet nft-list-addr
-
-OPTIONS
-  -n, --name=name  Name of wallet
-
-DESCRIPTION
-  ...
-  Will return a list of available addresses
-```
-
-_See code: [src/commands/nft-list-addr.js](https://github.com/Permissionless-Software-Foundation/slp-cli-wallet/blob/v3.0.0/src/commands/nft-list-addr.js)_
-
-## `slp-cli-wallet nft-list-tokens`
-
-List NFT tokens in a wallet address
-
-```
-USAGE
-  $ slp-cli-wallet nft-list-tokens
-
-OPTIONS
-  -g, --groups       List only NFT groups
-  -i, --index=index  Address index in the wallet
-  -n, --name=name    Name of wallet
-
-DESCRIPTION
-  ...
-  Will return a JSON formated list of available NFT tokens
-```
-
-_See code: [src/commands/nft-list-tokens.js](https://github.com/Permissionless-Software-Foundation/slp-cli-wallet/blob/v3.0.0/src/commands/nft-list-tokens.js)_
-
-## `slp-cli-wallet nft-create-child`
+## `hd-cli-wallet nft-create-child`
 
 Create NFT child
 
 ```
 USAGE
-  $ slp-cli-wallet nft-create-child
+  $ hd-cli-wallet nft-create-child
 
 OPTIONS
   -c, --child=child        Name of the child
@@ -285,15 +247,15 @@ DESCRIPTION
   Will create NFT child token in a specified NFT group (groupId parameter)
 ```
 
-_See code: [src/commands/nft-create-child.js](https://github.com/Permissionless-Software-Foundation/slp-cli-wallet/blob/v3.0.0/src/commands/nft-create-child.js)_
+_See code: [src/commands/nft-create-child.js](https://github.com/bch-coinjoin/hd-cli-wallet/blob/v1.0.1/src/commands/nft-create-child.js)_
 
-## `slp-cli-wallet nft-create-group`
+## `hd-cli-wallet nft-create-group`
 
 Create NFT Group
 
 ```
 USAGE
-  $ slp-cli-wallet nft-create-group
+  $ hd-cli-wallet nft-create-group
 
 OPTIONS
   -a, --amount=amount
@@ -310,15 +272,53 @@ DESCRIPTION
   Will create NFT group with specified name, ticker and amount
 ```
 
-_See code: [src/commands/nft-create-group.js](https://github.com/Permissionless-Software-Foundation/slp-cli-wallet/blob/v3.0.0/src/commands/nft-create-group.js)_
+_See code: [src/commands/nft-create-group.js](https://github.com/bch-coinjoin/hd-cli-wallet/blob/v1.0.1/src/commands/nft-create-group.js)_
 
-## `slp-cli-wallet nft-remove-child`
+## `hd-cli-wallet nft-list-addr`
+
+List addresses inside the wallet
+
+```
+USAGE
+  $ hd-cli-wallet nft-list-addr
+
+OPTIONS
+  -n, --name=name  Name of wallet
+
+DESCRIPTION
+  ...
+  Will return a list of available addresses
+```
+
+_See code: [src/commands/nft-list-addr.js](https://github.com/bch-coinjoin/hd-cli-wallet/blob/v1.0.1/src/commands/nft-list-addr.js)_
+
+## `hd-cli-wallet nft-list-tokens`
+
+List NFT tokens in a wallet address
+
+```
+USAGE
+  $ hd-cli-wallet nft-list-tokens
+
+OPTIONS
+  -g, --groups       List only NFT groups
+  -i, --index=index  Address index in the wallet
+  -n, --name=name    Name of wallet
+
+DESCRIPTION
+  ...
+  Will return a JSON formated list of available NFT tokens
+```
+
+_See code: [src/commands/nft-list-tokens.js](https://github.com/bch-coinjoin/hd-cli-wallet/blob/v1.0.1/src/commands/nft-list-tokens.js)_
+
+## `hd-cli-wallet nft-remove-child`
 
 Remove NFT child token
 
 ```
 USAGE
-  $ slp-cli-wallet nft-remove-child
+  $ hd-cli-wallet nft-remove-child
 
 OPTIONS
   -f, --funder=funder    Fee funder address index in the wallet
@@ -331,29 +331,29 @@ DESCRIPTION
   Will remove NFT child token (type = 65) with specified tokenId
 ```
 
-_See code: [src/commands/nft-remove-child.js](https://github.com/Permissionless-Software-Foundation/slp-cli-wallet/blob/v3.0.0/src/commands/nft-remove-child.js)_
+_See code: [src/commands/nft-remove-child.js](https://github.com/bch-coinjoin/hd-cli-wallet/blob/v1.0.1/src/commands/nft-remove-child.js)_
 
-## `slp-cli-wallet remove-wallet`
+## `hd-cli-wallet remove-wallet`
 
 Remove an existing wallet.
 
 ```
 USAGE
-  $ slp-cli-wallet remove-wallet
+  $ hd-cli-wallet remove-wallet
 
 OPTIONS
   -n, --name=name  Name of wallet
 ```
 
-_See code: [src/commands/remove-wallet.js](https://github.com/Permissionless-Software-Foundation/slp-cli-wallet/blob/v3.0.0/src/commands/remove-wallet.js)_
+_See code: [src/commands/remove-wallet.js](https://github.com/bch-coinjoin/hd-cli-wallet/blob/v1.0.1/src/commands/remove-wallet.js)_
 
-## `slp-cli-wallet scan-funds`
+## `hd-cli-wallet scan-funds`
 
 Scans first 20 addresses of each derivation path for
 
 ```
 USAGE
-  $ slp-cli-wallet scan-funds
+  $ hd-cli-wallet scan-funds
 
 OPTIONS
   -m, --mnemonic=mnemonic  mnemonic phrase to generate addresses, wrapped in quotes
@@ -369,15 +369,15 @@ DESCRIPTION
   0 - Used by common software like the Bitcoin.com wallet and Honest.cash
 ```
 
-_See code: [src/commands/scan-funds.js](https://github.com/Permissionless-Software-Foundation/slp-cli-wallet/blob/v3.0.0/src/commands/scan-funds.js)_
+_See code: [src/commands/scan-funds.js](https://github.com/bch-coinjoin/hd-cli-wallet/blob/v1.0.1/src/commands/scan-funds.js)_
 
-## `slp-cli-wallet send`
+## `hd-cli-wallet send`
 
 Send an amount of BCH
 
 ```
 USAGE
-  $ slp-cli-wallet send
+  $ hd-cli-wallet send
 
 OPTIONS
   -a, --sendAddr=sendAddr  Cash address to send to
@@ -385,15 +385,15 @@ OPTIONS
   -n, --name=name          Name of wallet
 ```
 
-_See code: [src/commands/send.js](https://github.com/Permissionless-Software-Foundation/slp-cli-wallet/blob/v3.0.0/src/commands/send.js)_
+_See code: [src/commands/send.js](https://github.com/bch-coinjoin/hd-cli-wallet/blob/v1.0.1/src/commands/send.js)_
 
-## `slp-cli-wallet send-all`
+## `hd-cli-wallet send-all`
 
 Send all BCH in a wallet to another address. **Degrades Privacy**
 
 ```
 USAGE
-  $ slp-cli-wallet send-all
+  $ hd-cli-wallet send-all
 
 OPTIONS
   -a, --sendAddr=sendAddr  Cash address to send to
@@ -409,15 +409,15 @@ DESCRIPTION
   https://bit.ly/2TnhdVc
 ```
 
-_See code: [src/commands/send-all.js](https://github.com/Permissionless-Software-Foundation/slp-cli-wallet/blob/v3.0.0/src/commands/send-all.js)_
+_See code: [src/commands/send-all.js](https://github.com/bch-coinjoin/hd-cli-wallet/blob/v1.0.1/src/commands/send-all.js)_
 
-## `slp-cli-wallet send-tokens`
+## `hd-cli-wallet send-tokens`
 
 Send SLP tokens.
 
 ```
 USAGE
-  $ slp-cli-wallet send-tokens
+  $ hd-cli-wallet send-tokens
 
 OPTIONS
   -a, --sendAddr=sendAddr  Cash or SimpleLedger address to send to
@@ -426,15 +426,15 @@ OPTIONS
   -t, --tokenId=tokenId    Token ID
 ```
 
-_See code: [src/commands/send-tokens.js](https://github.com/Permissionless-Software-Foundation/slp-cli-wallet/blob/v3.0.0/src/commands/send-tokens.js)_
+_See code: [src/commands/send-tokens.js](https://github.com/bch-coinjoin/hd-cli-wallet/blob/v1.0.1/src/commands/send-tokens.js)_
 
-## `slp-cli-wallet sign-message`
+## `hd-cli-wallet sign-message`
 
 Sign message
 
 ```
 USAGE
-  $ slp-cli-wallet sign-message
+  $ hd-cli-wallet sign-message
 
 OPTIONS
   -i, --sendAddrIndex=sendAddrIndex  Address index
@@ -442,15 +442,38 @@ OPTIONS
   -n, --name=name                    Name of wallet
 ```
 
-_See code: [src/commands/sign-message.js](https://github.com/Permissionless-Software-Foundation/slp-cli-wallet/blob/v3.0.0/src/commands/sign-message.js)_
+_See code: [src/commands/sign-message.js](https://github.com/bch-coinjoin/hd-cli-wallet/blob/v1.0.1/src/commands/sign-message.js)_
 
-## `slp-cli-wallet sweep`
+## `hd-cli-wallet slp-avax-bridge`
+
+Send SLP tokens.
+
+```
+USAGE
+  $ hd-cli-wallet slp-avax-bridge
+
+OPTIONS
+  -a, --sendAddr=sendAddr  [default: bitcoincash:qrmjjjhz0a7dhp46ymw36l9zd0wcfryahq3s4989yj] Cash or SimpleLedger bridge
+                           address
+
+  -n, --name=name          Name of wallet
+
+  -q, --qty=qty
+
+  -t, --tokenId=tokenId    [default: c43eb59134473addee345df4172f4432bd09a8f087ba683462f0d66f8d221213] Token ID
+
+  -x, --avaxAddr=avaxAddr  Avalanche address to send tokens to from the bridge
+```
+
+_See code: [src/commands/slp-avax-bridge.js](https://github.com/bch-coinjoin/hd-cli-wallet/blob/v1.0.1/src/commands/slp-avax-bridge.js)_
+
+## `hd-cli-wallet sweep`
 
 Sweep a private key
 
 ```
 USAGE
-  $ slp-cli-wallet sweep
+  $ hd-cli-wallet sweep
 
 OPTIONS
   -a, --address=address  Address to sweep funds to.
@@ -466,20 +489,20 @@ DESCRIPTION
   an error if a WIF contains more than one class of token.
 ```
 
-_See code: [src/commands/sweep.js](https://github.com/Permissionless-Software-Foundation/slp-cli-wallet/blob/v3.0.0/src/commands/sweep.js)_
+_See code: [src/commands/sweep.js](https://github.com/bch-coinjoin/hd-cli-wallet/blob/v1.0.1/src/commands/sweep.js)_
 
-## `slp-cli-wallet update-balances`
+## `hd-cli-wallet update-balances`
 
 Poll the network and update the balances of the wallet.
 
 ```
 USAGE
-  $ slp-cli-wallet update-balances
+  $ hd-cli-wallet update-balances
 
 OPTIONS
   -i, --ignoreTokens  Ignore and burn tokens
   -n, --name=name     Name of wallet
 ```
 
-_See code: [src/commands/update-balances.js](https://github.com/Permissionless-Software-Foundation/slp-cli-wallet/blob/v3.0.0/src/commands/update-balances.js)_
+_See code: [src/commands/update-balances.js](https://github.com/bch-coinjoin/hd-cli-wallet/blob/v1.0.1/src/commands/update-balances.js)_
 <!-- commandsstop -->
