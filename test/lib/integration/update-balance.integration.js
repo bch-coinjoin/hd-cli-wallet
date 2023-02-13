@@ -28,14 +28,28 @@ describe('#update-balance-lib', () => {
     // sandbox = sinon.createSandbox()
   })
 
-  describe('#getAddressData', () => {
-    it('should retrieve data on 20 addresses from the wallet', async () => {
-      const result = await uut.getAddressData({ walletInfo, index: 60, limit: 5 })
+  // describe('#getAddressData', () => {
+  //   it('should retrieve data on 20 addresses from the wallet', async () => {
+  //     const result = await uut.getAddressData({ walletInfo, index: 60, limit: 5 })
+  //     console.log('result: ', JSON.stringify(result, null, 2))
+  //
+  //     assert.property(result, 'addresses')
+  //     assert.property(result, 'balances')
+  //     assert.property(result, 'utxos')
+  //   })
+  // })
+
+  describe('#getAllAddressData', () => {
+    it('should get 100 entries', async () => {
+      walletInfo.nextAddress = 150
+      console.log('walletInfo: ', walletInfo)
+
+      const result = await uut.getAllAddressData({ walletInfo })
       console.log('result: ', JSON.stringify(result, null, 2))
 
-      assert.property(result, 'addresses')
-      assert.property(result, 'balances')
-      assert.property(result, 'utxos')
+      assert.equal(result.addressData.length, 100)
+      assert.equal(result.balances.length, 100)
+      assert.equal(result.utxos.length, 100)
     })
   })
 })

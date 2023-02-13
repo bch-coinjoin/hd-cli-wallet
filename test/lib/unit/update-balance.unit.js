@@ -131,4 +131,60 @@ describe('#update-balance-lib', () => {
       }
     })
   })
+
+  describe('#getAllAddressData', () => {
+    it('should get data for the last 100 addresses in the wallet', async () => {
+      // Mock dependencies and force desired code path
+      sandbox.stub(uut, 'getAddressData').resolves({
+        addresses: ['a'],
+        balances: ['b'],
+        utxos: ['c']
+      })
+
+      walletInfo.nextAddress = 150
+
+      const result = await uut.getAllAddressData({ walletInfo })
+      // console.log('result: ', result)
+
+      // Call should make 5 API calls, so the length of data should be 5 elements long.
+      assert.equal(result.addresses.length, 5)
+      assert.equal(result.balances.length, 5)
+      assert.equal(result.utxos.length, 5)
+    })
+
+    it('should catch, report, and throw errors', async () => {
+      try {
+        // Force an error
+        sandbox.stub(uut, 'getAddressData').rejects(new Error('test error'))
+
+        walletInfo.nextAddress = 150
+
+        await uut.getAllAddressData({ walletInfo })
+
+        assert.fail('Unexpected code path')
+      } catch (err) {
+        assert.equal(err.message, 'test error')
+      }
+    })
+
+    it('should scan entire wallet when scanEntireWallet flag is true', async () => {
+      // Mock dependencies and force desired code path
+      sandbox.stub(uut, 'getAddressData').resolves({
+        addresses: ['a'],
+        balances: ['b'],
+        utxos: ['c']
+      })
+
+      walletInfo.nextAddress = 150
+
+      const result = await uut.getAllAddressData({ walletInfo, scanEntireWallet: true })
+      // console.log('result: ', result)
+
+      // A wallet with a nextAddress of 150 should make 8 API calls, so the
+      // length of data should be 8 elements long.
+      assert.equal(result.addresses.length, 8)
+      assert.equal(result.balances.length, 8)
+      assert.equal(result.utxos.length, 8)
+    })
+  })
 })
