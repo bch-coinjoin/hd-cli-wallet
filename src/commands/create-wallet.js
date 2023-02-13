@@ -6,10 +6,17 @@
 
 'use strict'
 
-const AppUtils = require('../util')
-const appUtils = new AppUtils()
+// Global npm libraries
+const { Command, flags } = require('@oclif/command')
+const fs = require('fs')
 
+// Local libraries
+const AppUtils = require('../util')
 const globalConfig = require('../../config')
+const CreateWalletLib = require('../lib/create-wallet')
+
+// Global variables
+const appUtils = new AppUtils()
 
 // Mainnet by default
 const bchjs = new globalConfig.BCHLIB({
@@ -17,20 +24,16 @@ const bchjs = new globalConfig.BCHLIB({
   apiToken: globalConfig.JWT
 })
 
-const { Command, flags } = require('@oclif/command')
-
-const fs = require('fs')
-
-// let _this
-
 class CreateWallet extends Command {
   constructor (argv, config) {
     super(argv, config)
     // _this = this
 
+    // Encapsulate dependencies
     this.bchjs = bchjs
     this.fs = fs
     this.localConfig = globalConfig
+    this.createWalletLib = new CreateWalletLib()
   }
 
   async run () {
@@ -68,49 +71,56 @@ class CreateWallet extends Command {
       if (!filename || filename === '') throw new Error('filename required.')
       if (this.fs.existsSync(filename)) { throw new Error('filename already exist') }
 
-      // console.log(filename)
-      // Initialize the wallet data object that will be saved to a file.
-      const walletData = {}
-      if (testnet) walletData.network = 'testnet'
-      else walletData.network = 'mainnet'
-
-      // create 128 bit (12 word) BIP39 mnemonic
-      const mnemonic = this.bchjs.Mnemonic.generate(
-        128,
-        this.bchjs.Mnemonic.wordLists().english
-      )
-      walletData.mnemonic = mnemonic
-
-      // root seed buffer
-      const rootSeed = await this.bchjs.Mnemonic.toSeed(mnemonic)
-
-      // master HDNode
-      let masterHDNode = this.bchjs.HDNode.fromSeed(rootSeed)
-      if (testnet) {
-        masterHDNode = this.bchjs.HDNode.fromSeed(rootSeed, 'testnet')
+      const createWalletObj = {
+        testnet,
+        desc
       }
 
-      // Use the 245 derivation path by default.
-      walletData.derivation = 245
+      const walletData = await this.createWalletLib.createWallet(createWalletObj)
 
-      // HDNode of BIP44 account
-      const account = this.bchjs.HDNode.derivePath(
-        masterHDNode,
-        `m/44'/${walletData.derivation}'/0'`
-      )
-
-      // derive the first external change address HDNode which is going to spend utxo
-      const change = this.bchjs.HDNode.derivePath(account, '0/0')
-
-      // get the cash address
-      walletData.rootAddress = this.bchjs.HDNode.toCashAddress(change)
-
-      // Initialize other data.
-      walletData.balance = 0
-      walletData.nextAddress = 1
-      walletData.hasBalance = []
-      walletData.addresses = []
-      walletData.description = desc
+      // console.log(filename)
+      // Initialize the wallet data object that will be saved to a file.
+      // const walletData = {}
+      // if (testnet) walletData.network = 'testnet'
+      // else walletData.network = 'mainnet'
+      //
+      // // create 128 bit (12 word) BIP39 mnemonic
+      // const mnemonic = this.bchjs.Mnemonic.generate(
+      //   128,
+      //   this.bchjs.Mnemonic.wordLists().english
+      // )
+      // walletData.mnemonic = mnemonic
+      //
+      // // root seed buffer
+      // const rootSeed = await this.bchjs.Mnemonic.toSeed(mnemonic)
+      //
+      // // master HDNode
+      // let masterHDNode = this.bchjs.HDNode.fromSeed(rootSeed)
+      // if (testnet) {
+      //   masterHDNode = this.bchjs.HDNode.fromSeed(rootSeed, 'testnet')
+      // }
+      //
+      // // Use the 245 derivation path by default.
+      // walletData.derivation = 245
+      //
+      // // HDNode of BIP44 account
+      // const account = this.bchjs.HDNode.derivePath(
+      //   masterHDNode,
+      //   `m/44'/${walletData.derivation}'/0'`
+      // )
+      //
+      // // derive the first external change address HDNode which is going to spend utxo
+      // const change = this.bchjs.HDNode.derivePath(account, '0/0')
+      //
+      // // get the cash address
+      // walletData.rootAddress = this.bchjs.HDNode.toCashAddress(change)
+      //
+      // // Initialize other data.
+      // walletData.balance = 0
+      // walletData.nextAddress = 1
+      // walletData.hasBalance = []
+      // walletData.addresses = []
+      // walletData.description = desc
 
       // Write out the basic information into a json file for other apps to use.
       // const filename = `${__dirname.toString()}/../../wallets/${name}.json`

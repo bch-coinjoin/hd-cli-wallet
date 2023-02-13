@@ -24,6 +24,7 @@
   "devDependencies": {
     "@oclif/dev-cli": "1.22.2",
     "@oclif/test": "1.2.7",
+    "browserify": "^17.0.0",
     "chai": "4.2.0",
     "coveralls": "3.0.2",
     "eslint": "7.26.0",
@@ -42,7 +43,8 @@
     "semantic-release": "17.4.2",
     "sinon": "9.0.0",
     "standard": "16.0.3",
-    "test-console": "1.1.0"
+    "test-console": "1.1.0",
+    "tinyify": "^4.0.0"
   },
   "engines": {
     "node": ">=16.0.0"
@@ -82,6 +84,7 @@
     "coverage:report": "nyc --reporter=html mocha test/commands/",
     "version": "oclif-dev readme && git add README.md",
     "semantic-release": "semantic-release",
-    "lint": "standard --env mocha --fix"
+    "lint": "standard --env mocha --fix",
+    "build": "browserify src/export-lib.js -p tinyify --s HdWallet -o dist/hd-wallet.min.js"
   }
 }
