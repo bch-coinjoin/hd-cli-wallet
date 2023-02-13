@@ -6,7 +6,6 @@
 const assert = require('chai').assert
 
 // Local libraries
-const testUtil = require('../../util/test-util')
 const UpdateBalanceLib = require('../../../src/lib/update-balance')
 const CreateWalletLib = require('../../../src/lib/create-wallet')
 

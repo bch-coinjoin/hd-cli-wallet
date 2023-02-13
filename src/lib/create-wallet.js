@@ -73,8 +73,8 @@ class CreateWalletLib {
 
       return walletData
     } catch (err) {
-      console.error('Error in lib/create-wallet.js/createWallet(): ', err)
-      if (err.code !== 'EEXIT') console.log('Error in createWallet().')
+      console.error('Error in lib/create-wallet.js/createWallet(): ', err.message)
+      // if (err.code !== 'EEXIT') console.log('Error in createWallet().')
       throw err
     }
   }

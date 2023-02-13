@@ -30,6 +30,15 @@ describe('#update-balance-lib', () => {
     sandbox.restore()
   })
 
+  describe('#constructor', () => {
+    it('should let the user override the restURL', () => {
+      const testUrl = 'http://test.com'
+      uut = new UpdateBalanceLib({ restURL: testUrl })
+
+      assert.equal(uut.bchConsumer.restURL, testUrl)
+    })
+  })
+
   describe('#getAddressData', () => {
     it('should retrieve data on 20 addresses from the wallet', async () => {
       // console.log('walletInfo: ', walletInfo)
@@ -84,6 +93,42 @@ describe('#update-balance-lib', () => {
 
       // There should be an hdIndex property in each address UTXO object
       assert.property(result.utxos[0], 'hdIndex')
+    })
+
+    it('should throw error if index is not supplied', async () => {
+      try {
+        await uut.getAddressData({ walletInfo })
+
+        assert.equal(true, false, 'unexpected result!')
+      } catch (err) {
+        // console.log(`err: ${util.inspect(err)}`)
+        assert.include(err.message, 'index must be supplied as a number')
+      }
+    })
+
+    it('should throw error if limit is not supplied', async () => {
+      try {
+        await uut.getAddressData({ walletInfo, index: 0 })
+
+        assert.equal(true, false, 'unexpected result!')
+      } catch (err) {
+        // console.log(`err: ${util.inspect(err)}`)
+        assert.include(
+          err.message,
+          'limit must be supplied as a non-zero number'
+        )
+      }
+    })
+
+    it('should throw error if limit is over 20', async () => {
+      try {
+        await uut.getAddressData({ walletInfo, index: 0, limit: 40 })
+
+        assert.equal(true, false, 'unexpected result!')
+      } catch (err) {
+        // console.log(`err: ${util.inspect(err)}`)
+        assert.include(err.message, 'limit must be 20 or less')
+      }
     })
   })
 })
