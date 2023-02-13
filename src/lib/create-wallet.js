@@ -15,7 +15,7 @@ const bchjs = new globalConfig.BCHLIB({
   apiToken: globalConfig.JWT
 })
 
-class CreateWallet {
+class CreateWalletLib {
   constructor () {
     // Encapsulate dependencies
     this.bchjs = bchjs
@@ -77,4 +77,4 @@ class CreateWallet {
   }
 }
 
-module.exports = CreateWallet
+module.exports = CreateWalletLib
