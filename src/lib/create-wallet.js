@@ -25,7 +25,10 @@ class CreateWalletLib {
   // testnet is a boolean.
   async createWallet (inObj = {}) {
     try {
-      const { desc, testnet } = inObj
+      // Input validation
+      let { desc, testnet } = inObj
+
+      if (!desc) desc = ''
 
       // console.log(filename)
       // Initialize the wallet data object that will be saved to a file.
