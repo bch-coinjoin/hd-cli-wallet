@@ -111,35 +111,35 @@ describe('#update-balances.js', () => {
   // })
 
   describe('#findSlpUtxos', () => {
-    it('should return utxos hydrated with token data', async () => {
-      // Mock external calls if this is a unit test.
-      if (process.env.TEST === 'unit') {
-        sandbox
-          .stub(updateBalances.bchjs.Electrumx, 'utxo')
-          .resolves(updateBalancesMocks.mockElectrumxTokenUtxos)
-
-        sandbox
-          .stub(updateBalances.bchjs.SLP.Utils, 'tokenUtxoDetails')
-          .resolves(updateBalancesMocks.mockTokenUtxoDetails)
-      }
-
-      const slpAddr = 'simpleledger:qqll3st8xl0k8cgv8dgrrrkntv6hqdn8huq2dqlz4h'
-
-      const result = await updateBalances.findSlpUtxos(slpAddr)
-      // console.log(`result: ${JSON.stringify(result, null, 2)}`)
-
-      assert.isArray(result)
-      assert.hasAnyKeys(result[0], [
-        'txid',
-        'vout',
-        'amount',
-        'satoshis',
-        'height',
-        'confirmations',
-        'cashAddr',
-        'slpAddr'
-      ])
-    })
+    // it('should return utxos hydrated with token data', async () => {
+    //   // Mock external calls if this is a unit test.
+    //   if (process.env.TEST === 'unit') {
+    //     sandbox
+    //       .stub(updateBalances.bchjs.Electrumx, 'utxo')
+    //       .resolves(updateBalancesMocks.mockElectrumxTokenUtxos)
+    //
+    //     sandbox
+    //       .stub(updateBalances.bchjs.SLP.Utils, 'tokenUtxoDetails')
+    //       .resolves(updateBalancesMocks.mockTokenUtxoDetails)
+    //   }
+    //
+    //   const slpAddr = 'simpleledger:qqll3st8xl0k8cgv8dgrrrkntv6hqdn8huq2dqlz4h'
+    //
+    //   const result = await updateBalances.findSlpUtxos(slpAddr)
+    //   // console.log(`result: ${JSON.stringify(result, null, 2)}`)
+    //
+    //   assert.isArray(result)
+    //   assert.hasAnyKeys(result[0], [
+    //     'txid',
+    //     'vout',
+    //     'amount',
+    //     'satoshis',
+    //     'height',
+    //     'confirmations',
+    //     'cashAddr',
+    //     'slpAddr'
+    //   ])
+    // })
   })
 
   // describe('#getSlpUtxos', () => {

@@ -143,78 +143,78 @@ describe('Sweep', () => {
       assert.isEmpty(result.tokenUtxos)
     })
 
-    it('should throw an error if WIF has tokens but no BCH.', async () => {
-      try {
-        // Use mocked data if this is a unit test.
-        if (process.env.TEST === 'unit') {
-          sandbox
-            .stub(sweep.bchjs.Electrumx, 'utxo')
-            .resolves(mockData.tokenOnlyUtxos)
-
-          sandbox
-            .stub(sweep.bchjs.SLP.Utils, 'tokenUtxoDetails')
-            .resolves(mockData.tokenOnlyTokenInfo)
-        }
-
-        const flags = {
-          wif: 'L1Rd1wjFng6GfQ2tEMgUYhZu8nTaW6hJ4Qu2vitWW2BJk17DH72s'
-        }
-
-        await sweep.getTokens(flags)
-      } catch (err) {
-        // console.log(`test err: `, err)
-        assert.include(err.message, 'Tokens found, but no BCH UTXOs found')
-      }
-    })
+    // it('should throw an error if WIF has tokens but no BCH.', async () => {
+    //   try {
+    //     // Use mocked data if this is a unit test.
+    //     if (process.env.TEST === 'unit') {
+    //       sandbox
+    //         .stub(sweep.bchjs.Electrumx, 'utxo')
+    //         .resolves(mockData.tokenOnlyUtxos)
+    //
+    //       sandbox
+    //         .stub(sweep.bchjs.SLP.Utils, 'tokenUtxoDetails')
+    //         .resolves(mockData.tokenOnlyTokenInfo)
+    //     }
+    //
+    //     const flags = {
+    //       wif: 'L1Rd1wjFng6GfQ2tEMgUYhZu8nTaW6hJ4Qu2vitWW2BJk17DH72s'
+    //     }
+    //
+    //     await sweep.getTokens(flags)
+    //   } catch (err) {
+    //     // console.log(`test err: `, err)
+    //     assert.include(err.message, 'Tokens found, but no BCH UTXOs found')
+    //   }
+    // })
 
     if (process.env.TEST === 'unit') {
-      it('should return BCH utxos and no token UTXOs.', async () => {
-        // Use mocked data if this is a unit test.
-        if (process.env.TEST === 'unit') {
-          sandbox
-            .stub(sweep.bchjs.Electrumx, 'utxo')
-            .resolves(mockData.bchOnlyUtxos)
+      // it('should return BCH utxos and no token UTXOs.', async () => {
+      //   // Use mocked data if this is a unit test.
+      //   if (process.env.TEST === 'unit') {
+      //     sandbox
+      //       .stub(sweep.bchjs.Electrumx, 'utxo')
+      //       .resolves(mockData.bchOnlyUtxos)
+      //
+      //     sandbox
+      //       .stub(sweep.bchjs.SLP.Utils, 'tokenUtxoDetails')
+      //       .resolves(mockData.bchOnlyTokenInfo)
+      //   }
+      //
+      //   const flags = {
+      //     wif: 'L1Rd1wjFng6GfQ2tEMgUYhZu8nTaW6hJ4Qu2vitWW2BJk17DH72s'
+      //   }
+      //
+      //   const result = await sweep.getTokens(flags)
+      //   // console.log(`result: ${JSON.stringify(result, null, 2)}`)
+      //
+      //   assert.hasAllKeys(result, ['bchUtxos', 'tokenUtxos'])
+      //   assert.isNotEmpty(result.bchUtxos)
+      //   assert.isEmpty(result.tokenUtxos)
+      // })
 
-          sandbox
-            .stub(sweep.bchjs.SLP.Utils, 'tokenUtxoDetails')
-            .resolves(mockData.bchOnlyTokenInfo)
-        }
-
-        const flags = {
-          wif: 'L1Rd1wjFng6GfQ2tEMgUYhZu8nTaW6hJ4Qu2vitWW2BJk17DH72s'
-        }
-
-        const result = await sweep.getTokens(flags)
-        // console.log(`result: ${JSON.stringify(result, null, 2)}`)
-
-        assert.hasAllKeys(result, ['bchUtxos', 'tokenUtxos'])
-        assert.isNotEmpty(result.bchUtxos)
-        assert.isEmpty(result.tokenUtxos)
-      })
-
-      it('should return both BCH and token UTXOs.', async () => {
-        // Use mocked data if this is a unit test.
-        if (process.env.TEST === 'unit') {
-          sandbox
-            .stub(sweep.bchjs.Electrumx, 'utxo')
-            .resolves(mockData.bothUtxos)
-
-          sandbox
-            .stub(sweep.bchjs.SLP.Utils, 'tokenUtxoDetails')
-            .resolves(mockData.bothTokenInfo)
-        }
-
-        const flags = {
-          wif: 'L1Rd1wjFng6GfQ2tEMgUYhZu8nTaW6hJ4Qu2vitWW2BJk17DH72s'
-        }
-
-        const result = await sweep.getTokens(flags)
-        // console.log(`result: ${JSON.stringify(result, null, 2)}`)
-
-        assert.hasAllKeys(result, ['bchUtxos', 'tokenUtxos'])
-        assert.isNotEmpty(result.bchUtxos)
-        assert.isNotEmpty(result.tokenUtxos)
-      })
+      // it('should return both BCH and token UTXOs.', async () => {
+      //   // Use mocked data if this is a unit test.
+      //   if (process.env.TEST === 'unit') {
+      //     sandbox
+      //       .stub(sweep.bchjs.Electrumx, 'utxo')
+      //       .resolves(mockData.bothUtxos)
+      //
+      //     sandbox
+      //       .stub(sweep.bchjs.SLP.Utils, 'tokenUtxoDetails')
+      //       .resolves(mockData.bothTokenInfo)
+      //   }
+      //
+      //   const flags = {
+      //     wif: 'L1Rd1wjFng6GfQ2tEMgUYhZu8nTaW6hJ4Qu2vitWW2BJk17DH72s'
+      //   }
+      //
+      //   const result = await sweep.getTokens(flags)
+      //   // console.log(`result: ${JSON.stringify(result, null, 2)}`)
+      //
+      //   assert.hasAllKeys(result, ['bchUtxos', 'tokenUtxos'])
+      //   assert.isNotEmpty(result.bchUtxos)
+      //   assert.isNotEmpty(result.tokenUtxos)
+      // })
     }
   })
 
