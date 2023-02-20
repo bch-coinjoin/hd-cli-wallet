@@ -187,4 +187,71 @@ describe('#update-balance-lib', () => {
       assert.equal(result.utxos.length, 8)
     })
   })
+
+  describe('#generateHasBalance', () => {
+    it('should remove addresses with empty balances', () => {
+      // Mock input data
+      const inObj = {
+        balances: [
+          {
+            address: 'fake-address-0',
+            hdIndex: 0,
+            balance: {
+              total: 0
+            }
+          },
+          {
+            address: 'fake-address-1',
+            hdIndex: 1,
+            balance: {
+              total: 1000
+            }
+          },
+          {
+            address: 'fake-address-2',
+            hdIndex: 2,
+            balance: {
+              total: 0
+            }
+          }
+        ]
+      }
+
+      const result = uut.generateHasBalance(inObj)
+      // console.log('result: ', result)
+
+      // Should reduce the array to one element.
+      assert.equal(result.length, 1)
+
+      // The one element left should be the one with the balance.
+      assert.equal(result[0].balanceSat, 1000)
+      assert.equal(result[0].address, 'fake-address-1')
+      assert.equal(result[0].hdIndex, 1)
+    })
+
+    it('should catch, report, and throw errors', () => {
+      try {
+        uut.generateHasBalance({})
+
+        assert.fail('Unexpected code path')
+      } catch (err) {
+        assert.include(err.message, 'Cannot read')
+      }
+    })
+  })
+
+  describe('#sumBalances', () => {
+    it('should sum balance', () => {
+      // Mock input data
+      const inAry = [{
+        balanceSat: 1000,
+        address: 'fake-address-1',
+        hdIndex: 1
+      }]
+
+      const result = uut.sumBalances(inAry)
+
+      assert.equal(result, 1000)
+    })
+  })
 })

@@ -16,6 +16,7 @@ class UpdateBalanceLib {
     let restURL = 'https://free-bch.fullstack.cash'
     // Allow the user to overwrite the server.
     if (localConfig.restURL) restURL = localConfig.restURL
+    console.log('restURL: ', restURL)
 
     // Encapsulate dependencies
     this.appUtils = new AppUtils()
@@ -150,6 +151,59 @@ class UpdateBalanceLib {
       console.error('Error in update-balance.js/getAllAddressData(): ', err.message)
       throw err
     }
+  }
+
+  // This function expects the output of getAllAddressData() as its input.
+  //
+  // The purpose of this function is to reduce lots of empty address data to
+  // just the addresses with balances.
+  //
+  // It loops through that raw data and returns an array of objects. Each object
+  // contains the address and balance for that address. Addresses without
+  // balances are ignored.
+  generateHasBalance (inObj = {}) {
+    try {
+      // const { addresses, balances, utxos } = inObj
+      const { balances } = inObj
+      // console.log('generateHasBalance() balances: ', JSON.stringify(balances, null, 2))
+
+      const outAry = []
+
+      for (let i = 0; i < balances.length; i++) {
+        const thisBalance = balances[i]
+
+        if (thisBalance.balance.total > 0) {
+          const tempObj = {
+            balanceSat: thisBalance.balance.total,
+            address: thisBalance.address,
+            hdIndex: thisBalance.hdIndex
+          }
+
+          outAry.push(tempObj)
+        }
+      }
+
+      return outAry
+    } catch (err) {
+      console.error('Error in update-balance.js/generateHasBalance(): ', err.message)
+      throw err
+    }
+  }
+
+  // This function expects the output of generateHasBalance() as its input.
+  // It loops through all the addresses with a balance and sums the balances,
+  // to achieve a total amount of BCH held by the HD wallet.
+  // The value returned is in satoshis (not BCH)
+  sumBalances (hasBalanceAry = []) {
+    // console.log('sumBalances() hasBalanceAry: ', hasBalanceAry)
+
+    let total = 0
+
+    for (let i = 0; i < hasBalanceAry.length; i++) {
+      total += hasBalanceAry[i].balanceSat
+    }
+
+    return total
   }
 }
 

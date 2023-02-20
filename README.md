@@ -90,13 +90,13 @@ USAGE
 * [`hd-cli-wallet nft-list-addr`](#hd-cli-wallet-nft-list-addr)
 * [`hd-cli-wallet nft-list-tokens`](#hd-cli-wallet-nft-list-tokens)
 * [`hd-cli-wallet nft-remove-child`](#hd-cli-wallet-nft-remove-child)
+* [`hd-cli-wallet old-update-balances`](#hd-cli-wallet-old-update-balances)
 * [`hd-cli-wallet remove-wallet`](#hd-cli-wallet-remove-wallet)
 * [`hd-cli-wallet scan-funds`](#hd-cli-wallet-scan-funds)
 * [`hd-cli-wallet send`](#hd-cli-wallet-send)
 * [`hd-cli-wallet send-all`](#hd-cli-wallet-send-all)
 * [`hd-cli-wallet send-tokens`](#hd-cli-wallet-send-tokens)
 * [`hd-cli-wallet sign-message`](#hd-cli-wallet-sign-message)
-* [`hd-cli-wallet slp-avax-bridge`](#hd-cli-wallet-slp-avax-bridge)
 * [`hd-cli-wallet sweep`](#hd-cli-wallet-sweep)
 * [`hd-cli-wallet update-balances`](#hd-cli-wallet-update-balances)
 
@@ -203,7 +203,7 @@ OPTIONS
   --all  see all commands in CLI
 ```
 
-_See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v3.2.2/src/commands/help.ts)_
+_See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v3.2.0/src/commands/help.ts)_
 
 ## `hd-cli-wallet list-wallets`
 
@@ -326,6 +326,21 @@ DESCRIPTION
 
 _See code: [src/commands/nft-remove-child.js](https://github.com/bch-coinjoin/hd-cli-wallet/blob/v1.0.1/src/commands/nft-remove-child.js)_
 
+## `hd-cli-wallet old-update-balances`
+
+Poll the network and update the balances of the wallet.
+
+```
+USAGE
+  $ hd-cli-wallet old-update-balances
+
+OPTIONS
+  -i, --ignoreTokens  Ignore and burn tokens
+  -n, --name=name     Name of wallet
+```
+
+_See code: [src/commands/old-update-balances.js](https://github.com/bch-coinjoin/hd-cli-wallet/blob/v1.0.1/src/commands/old-update-balances.js)_
+
 ## `hd-cli-wallet remove-wallet`
 
 Remove an existing wallet.
@@ -436,29 +451,6 @@ OPTIONS
 ```
 
 _See code: [src/commands/sign-message.js](https://github.com/bch-coinjoin/hd-cli-wallet/blob/v1.0.1/src/commands/sign-message.js)_
-
-## `hd-cli-wallet slp-avax-bridge`
-
-Send SLP tokens.
-
-```
-USAGE
-  $ hd-cli-wallet slp-avax-bridge
-
-OPTIONS
-  -a, --sendAddr=sendAddr  [default: bitcoincash:qrmjjjhz0a7dhp46ymw36l9zd0wcfryahq3s4989yj] Cash or SimpleLedger bridge
-                           address
-
-  -n, --name=name          Name of wallet
-
-  -q, --qty=qty
-
-  -t, --tokenId=tokenId    [default: c43eb59134473addee345df4172f4432bd09a8f087ba683462f0d66f8d221213] Token ID
-
-  -x, --avaxAddr=avaxAddr  Avalanche address to send tokens to from the bridge
-```
-
-_See code: [src/commands/slp-avax-bridge.js](https://github.com/bch-coinjoin/hd-cli-wallet/blob/v1.0.1/src/commands/slp-avax-bridge.js)_
 
 ## `hd-cli-wallet sweep`
 
