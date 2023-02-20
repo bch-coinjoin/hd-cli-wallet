@@ -254,4 +254,67 @@ describe('#update-balance-lib', () => {
       assert.equal(result, 1000)
     })
   })
+
+  describe('#generateBchUtxos', () => {
+    it('should remove addresses with no UTXOs', () => {
+      // Mock input data
+      const inObj = {
+        utxos: [
+          {
+            address: 'fake-address-0',
+            hdIndex: 0,
+            utxos: {
+              bchUtxos: []
+            }
+          },
+          {
+            address: 'fake-address-1',
+            hdIndex: 1,
+            utxos: {
+              bchUtxos: [
+                {
+                  height: 778744,
+                  tx_hash: 'f35623bb28db77c92301e16d1aca2d223812508cffc9081ba0605a37ccb8ee5b',
+                  tx_pos: 0,
+                  value: 148693,
+                  txid: 'f35623bb28db77c92301e16d1aca2d223812508cffc9081ba0605a37ccb8ee5b',
+                  vout: 0,
+                  address: 'bitcoincash:qrmgfhrgzlelkha9y943xz99627ydrvt0cjsrl7aew',
+                  isSlp: false
+                }
+              ]
+            }
+          },
+          {
+            address: 'fake-address-2',
+            hdIndex: 2,
+            utxos: {
+              bchUtxos: []
+            }
+          }
+        ]
+      }
+
+      const result = uut.generateBchUtxos(inObj)
+      // console.log('result: ', result)
+
+      // Should reduce the array to one element.
+      assert.equal(result.length, 1)
+
+      // The one element left should be the one with the balance.
+      assert.equal(result[0].bchUtxos.length, 1)
+      assert.equal(result[0].address, 'fake-address-1')
+      assert.equal(result[0].hdIndex, 1)
+    })
+
+    it('should catch, report, and throw errors', () => {
+      try {
+        uut.generateBchUtxos({})
+
+        assert.fail('Unexpected code path')
+      } catch (err) {
+        assert.include(err.message, 'Cannot read')
+      }
+    })
+  })
 })

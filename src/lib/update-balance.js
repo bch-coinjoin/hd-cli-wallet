@@ -205,6 +205,38 @@ class UpdateBalanceLib {
 
     return total
   }
+
+  // This function is similar to generateHasBalance(). It loops through the
+  // UTXO array as input, and as output, gives an array of objects. Each object
+  // is an address that contains BCH UTXOs.
+  generateBchUtxos (inObj = {}) {
+    try {
+      // const { addresses, balances, utxos } = inObj
+      const { utxos } = inObj
+      // console.log('generateBchUtxos() utxos: ', JSON.stringify(utxos, null, 2))
+
+      const outAry = []
+
+      for (let i = 0; i < utxos.length; i++) {
+        const thisAddr = utxos[i]
+
+        if (thisAddr.utxos.bchUtxos.length > 0) {
+          const tempObj = {
+            bchUtxos: thisAddr.utxos.bchUtxos,
+            address: thisAddr.address,
+            hdIndex: thisAddr.hdIndex
+          }
+
+          outAry.push(tempObj)
+        }
+      }
+
+      return outAry
+    } catch (err) {
+      console.error('Error in update-balance.js/generateHasBalance(): ', err.message)
+      throw err
+    }
+  }
 }
 
 module.exports = UpdateBalanceLib

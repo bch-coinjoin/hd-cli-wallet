@@ -73,6 +73,7 @@ describe('#update-balances.js', () => {
       // Mock dependencies and force desired code path
       sandbox.stub(uut.updateBalanceLib, 'getAllAddressData').resolves()
       sandbox.stub(uut.updateBalanceLib, 'generateHasBalance').returns()
+      sandbox.stub(uut.updateBalanceLib, 'generateBchUtxos').returns()
       sandbox.stub(uut.updateBalanceLib, 'sumBalances').returns()
       sandbox.stub(uut.appUtils, 'saveWallet').resolves()
 
