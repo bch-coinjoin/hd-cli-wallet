@@ -12,13 +12,16 @@
   https://gist.github.com/christroutner/8d54597da652fe2affa5a7230664bc45
 */
 
-'use strict'
+// Global npm libraries
+const { Command, flags } = require('@oclif/command')
 
+// Local libraies
 const GetAddress = require('./get-address')
 const UpdateBalances = require('./update-balances')
 const config = require('../../config')
-
 const AppUtils = require('../util')
+const UtxosLib = require('../lib/utxos')
+
 const appUtils = new AppUtils()
 
 // Mainnet by default
@@ -27,15 +30,15 @@ const bchjs = new config.BCHLIB({
   apiToken: config.JWT
 })
 
-const { Command, flags } = require('@oclif/command')
-
 class Send extends Command {
   constructor (argv, config) {
     super(argv, config)
     // _this = this
 
+    // Encapsulate dependencies
     this.bchjs = bchjs
     this.appUtils = appUtils
+    this.utxosLib = new UtxosLib()
   }
 
   async run () {
@@ -66,15 +69,17 @@ class Send extends Command {
       })
       updateBalances.bchjs = this.bchjs
       walletInfo = await updateBalances.updateBalances(flags)
+      console.log('walletInfo: ', JSON.stringify(walletInfo, null, 2))
 
       // Get info on UTXOs controlled by this wallet.
       // const utxos = await this.appUtils.getUTXOs(walletInfo)
-      const utxos = walletInfo.BCHUtxos
-      // console.log(`send utxos: ${JSON.stringify(utxos, null, 2)}`)
+      const utxos = walletInfo.bchUtxos
+      console.log(`send utxos: ${JSON.stringify(utxos, null, 2)}`)
 
       // Select optimal UTXO
-      const utxo = await this.selectUTXO(bch, utxos)
-      // console.log(`selected utxo: ${util.inspect(utxo)}`)
+      // const utxo = await this.selectUTXO(bch, utxos)
+      const utxo = await this.utxosLib.selectUtxo(bch, utxos)
+      console.log(`selected utxo: ${JSON.stringify(utxo, null, 2)}`)
 
       // Exit if there is no UTXO big enough to fulfill the transaction.
       if (!utxo.amount) {
