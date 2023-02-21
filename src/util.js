@@ -194,7 +194,7 @@ class AppUtils {
   // Generates an array of HD addresses.
   // Address are generated from index to limit.
   // e.g. generateAddress(walletInfo, 20, 10)
-  // will generate a 20-element array of addresses from index 20 to 29
+  // will generate a 10-element array of addresses from index 20 to 29
   async generateAddress (walletInfo, index, limit) {
     // console.log(`walletInfo: ${JSON.stringify(walletInfo, null, 2)}`)
 
@@ -232,6 +232,60 @@ class AppUtils {
     }
 
     return bulkAddresses
+  }
+
+  // Generates an array of HD addresses. Returns an object containing two arrays:
+  // - bulkAddresses - is a simple array of addresses
+  // - bulkAddressesWithIndex - is an array of objects. Each object contains the
+  //   address and the HD index that generated that address.
+  // Address are generated from index to limit.
+  // e.g. generateAddress(walletInfo, 20, 10)
+  // will generate a 10-element array of addresses from index 20 to 29
+  async generateAddresses (walletInfo, index, limit) {
+    // console.log(`walletInfo: ${JSON.stringify(walletInfo, null, 2)}`)
+
+    if (!walletInfo.mnemonic) throw new Error('mnemonic is undefined!')
+
+    // root seed buffer
+    const rootSeed = await this.bchjs.Mnemonic.toSeed(walletInfo.mnemonic)
+
+    // master HDNode
+    let masterHDNode
+    if (walletInfo.network === 'testnet') {
+      masterHDNode = this.bchjs.HDNode.fromSeed(rootSeed, 'testnet')
+    } else masterHDNode = this.bchjs.HDNode.fromSeed(rootSeed)
+
+    // HDNode of BIP44 account
+    const account = this.bchjs.HDNode.derivePath(
+      masterHDNode,
+      `m/44'/${walletInfo.derivation}'/0'`
+    )
+
+    // Empty array for collecting generated addresses
+    const bulkAddresses = []
+    const bulkAddressesWithIndex = []
+
+    // Generate the addresses.
+    for (let i = index; i < index + limit; i++) {
+      // derive an external change address HDNode
+      const change = this.bchjs.HDNode.derivePath(account, `0/${i}`)
+
+      // get the cash address
+      const newAddress = this.bchjs.HDNode.toCashAddress(change)
+      // const legacy = this.bchjs.HDNode.toLegacyAddress(change)
+
+      // push address into array
+      bulkAddresses.push(newAddress)
+
+      const addrWithIndex = {
+        addr: newAddress,
+        hdIndex: i
+      }
+      bulkAddressesWithIndex.push(addrWithIndex)
+    }
+
+    // return bulkAddresses
+    return { bulkAddresses, bulkAddressesWithIndex }
   }
 
   // Returns an integer representing the HD node index of an address. Scans

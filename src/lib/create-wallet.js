@@ -15,7 +15,7 @@ const bchjs = new globalConfig.BCHLIB({
   apiToken: globalConfig.JWT
 })
 
-class CreateWallet {
+class CreateWalletLib {
   constructor () {
     // Encapsulate dependencies
     this.bchjs = bchjs
@@ -25,7 +25,10 @@ class CreateWallet {
   // testnet is a boolean.
   async createWallet (inObj = {}) {
     try {
-      const { desc, testnet } = inObj
+      // Input validation
+      let { desc, testnet } = inObj
+
+      if (!desc) desc = ''
 
       // console.log(filename)
       // Initialize the wallet data object that will be saved to a file.
@@ -70,11 +73,11 @@ class CreateWallet {
 
       return walletData
     } catch (err) {
-      console.error('Error in lib/create-wallet.js/createWallet(): ', err)
-      if (err.code !== 'EEXIT') console.log('Error in createWallet().')
+      console.error('Error in lib/create-wallet.js/createWallet(): ', err.message)
+      // if (err.code !== 'EEXIT') console.log('Error in createWallet().')
       throw err
     }
   }
 }
 
-module.exports = CreateWallet
+module.exports = CreateWalletLib
