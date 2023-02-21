@@ -69,12 +69,12 @@ class Send extends Command {
       })
       updateBalances.bchjs = this.bchjs
       walletInfo = await updateBalances.updateBalances(flags)
-      console.log('walletInfo: ', JSON.stringify(walletInfo, null, 2))
+      // console.log('walletInfo: ', JSON.stringify(walletInfo, null, 2))
 
       // Get info on UTXOs controlled by this wallet.
       // const utxos = await this.appUtils.getUTXOs(walletInfo)
       const utxos = walletInfo.bchUtxos
-      console.log(`send utxos: ${JSON.stringify(utxos, null, 2)}`)
+      // console.log(`send utxos: ${JSON.stringify(utxos, null, 2)}`)
 
       // Select optimal UTXO
       // const utxo = await this.selectUTXO(bch, utxos)
@@ -83,7 +83,7 @@ class Send extends Command {
 
       // Exit if there is no UTXO big enough to fulfill the transaction.
       if (!utxo.amount) {
-        this.log('Could not find a UTXO big enough for this transaction.')
+        this.log('Error: Could not find a UTXO big enough for this transaction. Send more BCH to the wallet, or consolidate UTXOs with CoinJoin.')
         return
       }
 

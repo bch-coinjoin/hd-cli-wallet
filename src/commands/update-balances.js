@@ -93,7 +93,7 @@ class UpdateBalances extends Command {
       // Update the bchUtxos array with addresses that have BCH UTXOs.
       const bchUtxos = this.updateBalanceLib.generateBchUtxos(rawAddressData)
       walletInfo.bchUtxos = bchUtxos
-      console.log('bchUtxos: ', JSON.stringify(bchUtxos, null, 2))
+      // console.log('bchUtxos: ', JSON.stringify(bchUtxos, null, 2))
 
       // TODO: Add a functoin here similar to generateBchUtxos, but instead
       // extracts the Type1 SLP token UTXOs.
