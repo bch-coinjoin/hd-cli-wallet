@@ -32,44 +32,15 @@ class CreateWalletLib {
 
       // console.log(filename)
       // Initialize the wallet data object that will be saved to a file.
-      const walletData = {}
+      let walletData = {}
       if (testnet) walletData.network = 'testnet'
       else walletData.network = 'mainnet'
 
-      // create 128 bit (12 word) BIP39 mnemonic
-      const mnemonic = this.bchjs.Mnemonic.generate(
-        128,
-        this.bchjs.Mnemonic.wordLists().english
-      )
-      walletData.mnemonic = mnemonic
+      walletData.mnemonic = this.generateMnemonic()
 
-      // root seed buffer
-      const rootSeed = await this.bchjs.Mnemonic.toSeed(mnemonic)
-
-      // master HDNode
-      const masterHDNode = this.bchjs.HDNode.fromSeed(rootSeed)
-
-      // Use the 245 derivation path by default.
-      walletData.derivation = 245
-
-      // HDNode of BIP44 account
-      const account = this.bchjs.HDNode.derivePath(
-        masterHDNode,
-        `m/44'/${walletData.derivation}'/0'`
-      )
-
-      // derive the first external change address HDNode which is going to spend utxo
-      const change = this.bchjs.HDNode.derivePath(account, '0/0')
-
-      // get the cash address
-      walletData.rootAddress = this.bchjs.HDNode.toCashAddress(change)
-
-      // Initialize other data.
-      walletData.balance = 0
-      walletData.nextAddress = 1
-      walletData.hasBalance = []
-      walletData.addresses = []
       walletData.description = desc
+
+      walletData = await this.generateWalletObj(walletData)
 
       return walletData
     } catch (err) {
@@ -77,6 +48,50 @@ class CreateWalletLib {
       // if (err.code !== 'EEXIT') console.log('Error in createWallet().')
       throw err
     }
+  }
+
+  generateMnemonic () {
+    // create 128 bit (12 word) BIP39 mnemonic
+    const mnemonic = this.bchjs.Mnemonic.generate(
+      128,
+      this.bchjs.Mnemonic.wordLists().english
+    )
+
+    return mnemonic
+  }
+
+  // Generate a 'wallet object'. Expects an existing object with a 'mnemonic'
+  // property. It then fills out the rest of the object properties.
+  async generateWalletObj (walletData) {
+    // root seed buffer
+    const rootSeed = await this.bchjs.Mnemonic.toSeed(walletData.mnemonic)
+
+    // master HDNode
+    const masterHDNode = this.bchjs.HDNode.fromSeed(rootSeed)
+
+    // Use the 245 derivation path by default.
+    walletData.derivation = 245
+
+    // HDNode of BIP44 account
+    const account = this.bchjs.HDNode.derivePath(
+      masterHDNode,
+      `m/44'/${walletData.derivation}'/0'`
+    )
+
+    // derive the first external change address HDNode which is going to spend utxo
+    const change = this.bchjs.HDNode.derivePath(account, '0/0')
+
+    // get the cash address
+    walletData.rootAddress = this.bchjs.HDNode.toCashAddress(change)
+
+    // Initialize other data.
+    walletData.balance = 0
+    walletData.nextAddress = 1
+    walletData.hasBalance = []
+    walletData.addresses = []
+    // walletData.description = desc
+
+    return walletData
   }
 }
 
