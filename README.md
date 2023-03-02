@@ -79,6 +79,7 @@ USAGE
 
 <!-- commands -->
 * [`hd-cli-wallet burn-tokens`](#hd-cli-wallet-burn-tokens)
+* [`hd-cli-wallet coinjoin-single`](#hd-cli-wallet-coinjoin-single)
 * [`hd-cli-wallet create-wallet`](#hd-cli-wallet-create-wallet)
 * [`hd-cli-wallet derivation`](#hd-cli-wallet-derivation)
 * [`hd-cli-wallet get-address`](#hd-cli-wallet-get-address)
@@ -115,6 +116,24 @@ OPTIONS
 ```
 
 _See code: [src/commands/burn-tokens.js](https://github.com/bch-coinjoin/hd-cli-wallet/blob/v1.0.1/src/commands/burn-tokens.js)_
+
+## `hd-cli-wallet coinjoin-single`
+
+Pariticipate in a single CoinJoin round
+
+```
+USAGE
+  $ hd-cli-wallet coinjoin-single
+
+OPTIONS
+  -n, --name=name  Name of wallet
+
+DESCRIPTION
+  This command will initiate a CoinJoin round, and will exit after a single
+  successful round.
+```
+
+_See code: [src/commands/coinjoin-single.js](https://github.com/bch-coinjoin/hd-cli-wallet/blob/v1.0.1/src/commands/coinjoin-single.js)_
 
 ## `hd-cli-wallet create-wallet`
 
