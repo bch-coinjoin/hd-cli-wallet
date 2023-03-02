@@ -63,7 +63,7 @@
     "wallet"
   ],
   "license": "MIT",
-  "main": "src/index.js",
+  "main": "src/export-lib.js",
   "oclif": {
     "commands": "./src/commands",
     "bin": "hd-cli-wallet",
