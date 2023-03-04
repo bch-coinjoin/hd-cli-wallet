@@ -37,17 +37,6 @@ class Utxos {
         if (thisUTXO.satoshis >= total) {
           // console.log(`thisUtxo: ${JSON.stringify(thisUTXO, null, 2)}`)
 
-          // Skip if the UTXO is invalid
-          // const isValid = await this.appUtils.isValidUtxo(thisUTXO)
-          // if (!isValid) {
-          //   console.log(
-          //     'warning: invalid UTXO found. You may need to wait for the indexer to catch up.'
-          //   )
-          //   // console.log(`thisUTXO: ${JSON.stringify(thisUTXO, null, 2)}`)
-          //   continue
-          // }
-          // console.log(`isValid: `, isValid)
-
           // Skip if change would less than the dust amount.
           if (thisUTXO.satoshis - bchSatoshis < 546) continue
 
@@ -69,6 +58,67 @@ class Utxos {
     }
 
     return candidateUTXO
+  }
+
+  // Similar to the selectUtxos(), this selection algorithm selects UTXOs to
+  // use in a CoinJoin, using this criteria:
+  // 1. The UTXOs chosen must exceed the target BCH amount by at least 546 sats.
+  // This function returns an array of UTXOs.
+  selectCoinJoinUtxos (sats, utxos) {
+    try {
+      const candidateUtxos = []
+
+      // Add dust sats to pay for TX fees.
+      const total = sats + 546
+
+      // console.log(`utxos: ${JSON.stringify(utxos, null, 2)}`)
+
+      let breakOutOfParentLoop = false
+
+      // Loop through each address.
+      for (let i = 0; i < utxos.length; i++) {
+        const thisAddrObj = utxos[i]
+
+        // Loop through each UTXO for each address.
+        for (let j = 0; j < thisAddrObj.bchUtxos.length; j++) {
+          const thisUTXO = thisAddrObj.bchUtxos[j]
+
+          // Ensure the Electrumx or Blockbook UTXO has a satoshis property.
+          if (thisUTXO.value && !thisUTXO.satoshis) {
+            thisUTXO.satoshis = Number(thisUTXO.value)
+          }
+
+          // Ensure the UTXO has HD index information
+          thisUTXO.hdIndex = thisAddrObj.hdIndex
+
+          // Add the UTXO to the list of candidate UTXOs.
+          candidateUtxos.push(thisUTXO)
+
+          // Sum the total BCH in all the already selected UTXO candidates
+          let subTotal = 0
+          candidateUtxos.map(x => subTotal += x.satoshis)
+          // console.log('subTotal: ', subTotal)
+
+          const diff = total - subTotal
+          // console.log('diff: ', diff)
+
+          // Exit the loop if enough UTXO candidates have been chosen to meet
+          // the BCH requirement.
+          if (diff < 0) {
+            console.log('Breaking out of for loop')
+            breakOutOfParentLoop = true
+            break
+          }
+        }
+
+        if (breakOutOfParentLoop) break
+      }
+
+      return candidateUtxos
+    } catch (err) {
+      console.error('Error in selectCoinJoinUtxos()')
+      throw err
+    }
   }
 }
 
