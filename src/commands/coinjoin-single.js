@@ -32,8 +32,8 @@ class CoinJoinSingle extends Command {
     console.log('walletInfo: ', walletInfo)
 
     // Pass the wallet UTXOs to the CoinJoin API
-    const { bchUtxos } = walletInfo
-    const inObj = { bchUtxos }
+    const { bchUtxos, mnemonic } = walletInfo
+    const inObj = { bchUtxos, mnemonic }
     const result = await this.axios.post('http://localhost:5540/wallet', inObj)
     console.log(`result.data: ${JSON.stringify(result.data, null, 2)}`)
   }

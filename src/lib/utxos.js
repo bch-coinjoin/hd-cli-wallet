@@ -96,7 +96,7 @@ class Utxos {
 
           // Sum the total BCH in all the already selected UTXO candidates
           let subTotal = 0
-          candidateUtxos.map(x => subTotal += x.satoshis)
+          candidateUtxos.map(x => { subTotal += x.satoshis; return false })
           // console.log('subTotal: ', subTotal)
 
           const diff = total - subTotal
