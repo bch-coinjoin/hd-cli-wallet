@@ -5,12 +5,16 @@
 // Sublibraries
 const CreateWalletLib = require('./lib/create-wallet')
 const UpdateBalanceLib = require('./lib/update-balance')
+const Utxos = require('./lib/utxos')
+const Util = require('./util')
 
 class HdWallet {
-  constructor () {
+  constructor (config) {
     // Encapsulate sublibraries
-    this.createWallet = new CreateWalletLib()
-    this.updateBalance = new UpdateBalanceLib()
+    this.createWallet = new CreateWalletLib(config)
+    this.updateBalance = new UpdateBalanceLib(config)
+    this.utxos = new Utxos(config)
+    this.util = new Util(config)
   }
 }
 
