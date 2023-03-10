@@ -11,6 +11,7 @@ const axios = require('axios')
 // Local libraries
 const AppUtils = require('../util')
 const UpdateBalancesCmd = require('./update-balances')
+const Transactions = require('../lib/transaction')
 
 class CoinJoinSingle extends Command {
   constructor (argv, config) {
@@ -20,6 +21,7 @@ class CoinJoinSingle extends Command {
     this.util = new AppUtils()
     this.updateBalancesCmd = new UpdateBalancesCmd()
     this.axios = axios
+    this.transactions = new Transactions()
   }
 
   async run () {
@@ -39,11 +41,18 @@ class CoinJoinSingle extends Command {
 
     do {
       const utxCall = await this.axios.get('http://localhost:5540/wallet/unsignedTx')
-      console.log('utxCall.data: ', utxCall.data)
+      console.log('utxCall.data: ', JSON.stringify(utxCall.data, null, 2))
 
       if (utxCall.data) {
-        console.log('Unsigned TX data received. Can now sign and submit')
-        break
+        const unsignedHex = utxCall.data.unsignedHex
+        const utxosToSign = utxCall.data.peerData.coinjoinUtxos
+
+        if (unsignedHex) {
+          console.log('Unsigned TX data received. Can now sign and submit')
+          await this.transactions.signCoinJoinTx({ unsignedHex, utxosToSign, walletInfo })
+
+          break
+        }
       }
 
       await this.sleep(10000)
