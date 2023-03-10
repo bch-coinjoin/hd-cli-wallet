@@ -36,6 +36,18 @@ class CoinJoinSingle extends Command {
     const inObj = { bchUtxos, mnemonic }
     const result = await this.axios.post('http://localhost:5540/wallet', inObj)
     console.log(`result.data: ${JSON.stringify(result.data, null, 2)}`)
+
+    do {
+      const utxCall = await this.axios.get('http://localhost:5540/wallet/unsignedTx')
+      console.log('utxCall.data: ', utxCall.data)
+
+      if (utxCall.data) {
+        console.log('Unsigned TX data received. Can now sign and submit')
+        break
+      }
+
+      await this.sleep(10000)
+    } while (1)
   }
 
   // Validate the proper flags are passed in.
@@ -47,6 +59,10 @@ class CoinJoinSingle extends Command {
     }
 
     return true
+  }
+
+  sleep (ms) {
+    return new Promise(resolve => setTimeout(resolve, ms))
   }
 }
 
