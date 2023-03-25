@@ -39,6 +39,9 @@ class CoinJoinSingle extends Command {
     const result = await this.axios.post('http://localhost:5540/wallet', inObj)
     console.log(`result.data: ${JSON.stringify(result.data, null, 2)}`)
 
+    // This will hold the partially signed transaction.
+    let psHex = null
+
     do {
       const utxCall = await this.axios.get('http://localhost:5540/wallet/unsignedTx')
       console.log('utxCall.data: ', JSON.stringify(utxCall.data, null, 2))
@@ -49,7 +52,7 @@ class CoinJoinSingle extends Command {
 
         if (unsignedHex) {
           console.log('Unsigned TX data received. Can now sign and submit')
-          await this.transactions.signCoinJoinTx({ unsignedHex, utxosToSign, walletInfo })
+          psHex = await this.transactions.signCoinJoinTx({ unsignedHex, utxosToSign, walletInfo })
 
           break
         }
@@ -57,6 +60,13 @@ class CoinJoinSingle extends Command {
 
       await this.sleep(10000)
     } while (1)
+
+    if (!psHex) {
+      throw new Error('While loop exited without retrieving a partially signed TX!')
+    }
+
+    // Pass the partially signed transaction back to the REST API
+    await this.axios.post('http://localhost:5540/wallet/partiallySignedTx', { psHex })
   }
 
   // Validate the proper flags are passed in.
