@@ -59,7 +59,7 @@ class Transactions {
         }
 
         console.log(`thisUtxo: ${JSON.stringify(thisUtxo, null, 2)}`)
-        console.log(`txBuilder.tx.ins: ${JSON.stringify(txBuilder.tx.ins, null, 2)}`)
+        // console.log(`txBuilder.tx.ins: ${JSON.stringify(txBuilder.tx.ins, null, 2)}`)
 
         const txInputIndex = this.inputForUtxo(thisUtxo, txBuilder.tx.ins)
         // console.log('txInputIndex: ', txInputIndex)
@@ -98,7 +98,7 @@ class Transactions {
       for (let i = 0; i < txInputs.length; i++) {
         const input = txInputs[i]
         const txId = Buffer.from(input.hash).reverse().toString('hex')
-        // console.log(`txid: ${txId}, index: ${input.index}`)
+        console.log(`txid: ${txId}, index: ${input.index}`)
         if (txId === utxo.tx_hash && input.index === utxo.tx_pos) return i
       }
 
