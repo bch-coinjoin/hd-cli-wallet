@@ -365,6 +365,32 @@ class AppUtils {
       return false
     }
   }
+
+  // Given an HD index, this function will return an object that contains the
+  // WIF private key, legacy address, and BCH address for that index.
+  async getPrivateKey (walletInfo, index) {
+    try {
+      const mnemonic = walletInfo.mnemonic
+
+      // root seed buffer
+      const rootSeed = await this.bchjs.Mnemonic.toSeed(mnemonic)
+
+      // master HDNode
+      const masterHDNode = this.bchjs.HDNode.fromSeed(rootSeed)
+
+      const childNode = masterHDNode.derivePath(`m/44'/245'/0'/0/${index}`)
+
+      const cashAddress = this.bchjs.HDNode.toCashAddress(childNode)
+      const legacyAddress = this.bchjs.HDNode.toLegacyAddress(childNode)
+      const wif = this.bchjs.HDNode.toWIF(childNode)
+      const ecPair = this.bchjs.ECPair.fromWIF(wif)
+
+      return { cashAddress, legacyAddress, wif, ecPair }
+    } catch (err) {
+      console.error('Error in getKeyPair()')
+      throw err
+    }
+  }
 }
 
 module.exports = AppUtils

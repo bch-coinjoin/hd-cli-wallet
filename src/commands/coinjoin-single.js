@@ -11,6 +11,7 @@ const axios = require('axios')
 // Local libraries
 const AppUtils = require('../util')
 const UpdateBalancesCmd = require('./update-balances')
+const Transactions = require('../lib/transaction')
 
 class CoinJoinSingle extends Command {
   constructor (argv, config) {
@@ -20,6 +21,7 @@ class CoinJoinSingle extends Command {
     this.util = new AppUtils()
     this.updateBalancesCmd = new UpdateBalancesCmd()
     this.axios = axios
+    this.transactions = new Transactions()
   }
 
   async run () {
@@ -36,6 +38,36 @@ class CoinJoinSingle extends Command {
     const inObj = { bchUtxos, mnemonic }
     const result = await this.axios.post('http://localhost:5540/wallet', inObj)
     console.log(`result.data: ${JSON.stringify(result.data, null, 2)}`)
+
+    // This will hold the partially signed transaction.
+    let psHex = null
+    let utxosToSign = []
+
+    do {
+      const utxCall = await this.axios.get('http://localhost:5540/wallet/unsignedTx')
+      console.log('utxCall.data: ', JSON.stringify(utxCall.data, null, 2))
+
+      if (utxCall.data) {
+        const unsignedHex = utxCall.data.unsignedHex
+        utxosToSign = utxCall.data.peerData.coinjoinUtxos
+
+        if (unsignedHex) {
+          console.log('Unsigned TX data received. Can now sign and submit')
+          psHex = await this.transactions.signCoinJoinTx({ unsignedHex, utxosToSign, walletInfo })
+
+          break
+        }
+      }
+
+      await this.sleep(10000)
+    } while (1)
+
+    if (!psHex) {
+      throw new Error('While loop exited without retrieving a partially signed TX!')
+    }
+
+    // Pass the partially signed transaction back to the REST API
+    await this.axios.post('http://localhost:5540/wallet/partiallySignedTx', { psHex, signedUtxos: utxosToSign })
   }
 
   // Validate the proper flags are passed in.
@@ -47,6 +79,10 @@ class CoinJoinSingle extends Command {
     }
 
     return true
+  }
+
+  sleep (ms) {
+    return new Promise(resolve => setTimeout(resolve, ms))
   }
 }
 
