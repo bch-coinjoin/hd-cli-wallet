@@ -41,6 +41,7 @@ class CoinJoinSingle extends Command {
 
     // This will hold the partially signed transaction.
     let psHex = null
+    let utxosToSign = []
 
     do {
       const utxCall = await this.axios.get('http://localhost:5540/wallet/unsignedTx')
@@ -48,7 +49,7 @@ class CoinJoinSingle extends Command {
 
       if (utxCall.data) {
         const unsignedHex = utxCall.data.unsignedHex
-        const utxosToSign = utxCall.data.peerData.coinjoinUtxos
+        utxosToSign = utxCall.data.peerData.coinjoinUtxos
 
         if (unsignedHex) {
           console.log('Unsigned TX data received. Can now sign and submit')
@@ -66,7 +67,7 @@ class CoinJoinSingle extends Command {
     }
 
     // Pass the partially signed transaction back to the REST API
-    await this.axios.post('http://localhost:5540/wallet/partiallySignedTx', { psHex })
+    await this.axios.post('http://localhost:5540/wallet/partiallySignedTx', { psHex, signedUtxos: utxosToSign })
   }
 
   // Validate the proper flags are passed in.
