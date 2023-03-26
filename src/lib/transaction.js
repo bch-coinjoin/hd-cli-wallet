@@ -62,7 +62,7 @@ class Transactions {
         // console.log(`txBuilder.tx.ins: ${JSON.stringify(txBuilder.tx.ins, null, 2)}`)
 
         const txInputIndex = this.inputForUtxo(thisUtxo, txBuilder.tx.ins)
-        // console.log('txInputIndex: ', txInputIndex)
+        console.log('txInputIndex: ', txInputIndex)
 
         thisUtxo.wif = hdData.wif
         const ecPair = hdData.ecPair
@@ -87,7 +87,7 @@ class Transactions {
 
       return psHex
     } catch (err) {
-      console.error('Error in signCoinJoinTx()')
+      console.error('Error in signCoinJoinTx(): ', err)
       throw err
     }
   }
