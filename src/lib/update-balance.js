@@ -16,7 +16,7 @@ class UpdateBalanceLib {
     let restURL = 'https://free-bch.fullstack.cash'
     // Allow the user to overwrite the server.
     if (localConfig.restURL) restURL = localConfig.restURL
-    console.log('restURL: ', restURL)
+    // console.log('restURL: ', restURL)
 
     // Encapsulate dependencies
     this.appUtils = new AppUtils()

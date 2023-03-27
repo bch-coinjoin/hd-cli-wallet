@@ -12,6 +12,7 @@ const axios = require('axios')
 const AppUtils = require('../util')
 const UpdateBalancesCmd = require('./update-balances')
 const Transactions = require('../lib/transaction')
+const GetAddress = require('../commands/get-address')
 
 class CoinJoinSingle extends Command {
   constructor (argv, config) {
@@ -22,6 +23,7 @@ class CoinJoinSingle extends Command {
     this.updateBalancesCmd = new UpdateBalancesCmd()
     this.axios = axios
     this.transactions = new Transactions()
+    this.getAddress = new GetAddress()
   }
 
   async run () {
@@ -29,13 +31,30 @@ class CoinJoinSingle extends Command {
 
     this.validateFlags(flags)
 
+    // Generate an absolute filename from the name.
+    const filename = `${__dirname.toString()}/../../wallets/${
+      flags.name
+    }.json`
+
     // Update the wallet UTXOs
-    const walletInfo = await this.updateBalancesCmd.updateBalances(flags)
+    let walletInfo = await this.updateBalancesCmd.updateBalances(flags)
     console.log('walletInfo: ', walletInfo)
 
+    // Generate an output address
+    let getAddrOut = await this.getAddress.getAddress({ walletInfo })
+    const outputAddr = getAddrOut.newAddress
+    walletInfo = getAddrOut.newWalletInfo
+    await this.getAddress.updateWalletFile({ filename, walletInfo })
+
+    // Generate a change address
+    getAddrOut = await this.getAddress.getAddress({ walletInfo })
+    const changeAddr = getAddrOut.newAddress
+    walletInfo = getAddrOut.newWalletInfo
+    await this.getAddress.updateWalletFile({ filename, walletInfo })
+
     // Pass the wallet UTXOs to the CoinJoin API
-    const { bchUtxos, mnemonic } = walletInfo
-    const inObj = { bchUtxos, mnemonic }
+    const { bchUtxos } = walletInfo
+    const inObj = { bchUtxos, outputAddr, changeAddr }
     const result = await this.axios.post('http://localhost:5540/wallet', inObj)
     console.log(`result.data: ${JSON.stringify(result.data, null, 2)}`)
 
