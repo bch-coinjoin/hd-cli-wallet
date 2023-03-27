@@ -7,13 +7,11 @@
   TODO:
 */
 
-'use strict'
-
+// Global npm libraries
 const qrcode = require('qrcode-terminal')
 
+// local libraries
 const AppUtils = require('../util')
-const appUtils = new AppUtils()
-
 const config = require('../../config')
 
 // Mainnet by default.
@@ -30,8 +28,10 @@ class GetAddress extends Command {
   constructor (argv, config) {
     super(argv, config)
 
+    // Encapsualt dependencies
     this.bchjs = bchjs
-    this.appUtils = appUtils
+    this.appUtils = new AppUtils()
+    this.qrcode = qrcode
   }
 
   async run () {
@@ -41,60 +41,65 @@ class GetAddress extends Command {
       // Validate input flags
       this.validateFlags(flags)
 
-      // Determine if this is a testnet wallet or a mainnet wallet.
-      if (flags.testnet) {
-        this.bchjs = new config.BCHLIB({ restURL: config.TESTNET_REST })
-      }
-
       // Generate an absolute filename from the name.
       const filename = `${__dirname.toString()}/../../wallets/${
         flags.name
       }.json`
 
-      const newAddress = await this.getAddress(filename, flags)
+      let walletInfo = this.appUtils.openWallet(filename)
+
+      // const newAddress = await this.getAddress(filename, flags)
+      const { newAddress, newWalletInfo } = await this.getAddress({ flags, walletInfo })
+      walletInfo = newWalletInfo
+
+      // Update the wallet JSON file
+      await this.updateWalletFile({ filename, walletInfo })
 
       const slpAddr = this.bchjs.SLP.Address.toSLPAddress(newAddress)
       const legacy = this.bchjs.Address.toLegacyAddress(newAddress)
 
-      // Cut down on screen spam when running unit tests.
-      if (process.env.TEST !== 'unit') {
-        // Display the address as a QR code.
-        qrcode.generate(newAddress, { small: true })
+      // Display the address as a QR code.
+      this.qrcode.generate(newAddress, { small: true })
 
-        // Display the address to the user.
-        this.log(`cash address: ${newAddress}`)
-        this.log(`SLP address: ${slpAddr}`)
-        this.log(`legacy address: ${legacy}`)
-      }
+      // Display the address to the user.
+      this.log(`cash address: ${newAddress}`)
+      this.log(`SLP address: ${slpAddr}`)
+      this.log(`legacy address: ${legacy}`)
 
       return newAddress
     } catch (err) {
       if (err.message) console.log(err.message)
       else console.log('Error in GetAddress.run: ', err)
+      // console.log('error: ', err)
 
       return 0
     }
   }
 
-  async getAddress (filename, flags) {
+  // async getAddress (filename, flags) {
+  async getAddress (inObj = {}) {
     // const filename = `${__dirname.toString()}/../../wallets/${name}.json`
 
-    const walletInfo = this.appUtils.openWallet(filename)
+    const { flags, walletInfo } = inObj
+
+    // const walletInfo = this.appUtils.openWallet(filename)
     // console.log(`walletInfo: ${JSON.stringify(walletInfo, null, 2)}`)
 
     // Point to the correct rest server.
-    if (walletInfo.network === 'testnet') {
-      this.bchjs = new config.BCHLIB({ restURL: config.TESTNET_REST })
-    } else this.bchjs = new config.BCHLIB({ restURL: config.MAINNET_REST })
+    // if (walletInfo.network === 'testnet') {
+    //   this.bchjs = new config.BCHLIB({ restURL: config.TESTNET_REST })
+    // } else this.bchjs = new config.BCHLIB({ restURL: config.MAINNET_REST })
+    this.bchjs = new config.BCHLIB({ restURL: config.MAINNET_REST })
 
     // root seed buffer
     const rootSeed = await this.bchjs.Mnemonic.toSeed(walletInfo.mnemonic)
 
     // master HDNode
-    let masterHDNode
-    if (walletInfo.network === 'testnet') {
-      masterHDNode = this.bchjs.HDNode.fromSeed(rootSeed, 'testnet')
-    } else masterHDNode = this.bchjs.HDNode.fromSeed(rootSeed)
+    // let masterHDNode
+    // if (walletInfo.network === 'testnet') {
+    //   masterHDNode = this.bchjs.HDNode.fromSeed(rootSeed, 'testnet')
+    // } else masterHDNode = this.bchjs.HDNode.fromSeed(rootSeed)
+    const masterHDNode = this.bchjs.HDNode.fromSeed(rootSeed)
 
     // HDNode of BIP44 account
     const account = this.bchjs.HDNode.derivePath(
@@ -125,7 +130,7 @@ class GetAddress extends Command {
     }
 
     // Update the wallet file.
-    await this.appUtils.saveWallet(filename, walletInfo)
+    // await this.appUtils.saveWallet(filename, walletInfo)
 
     // get the cash address
     let newAddress = this.bchjs.HDNode.toCashAddress(change)
@@ -135,7 +140,16 @@ class GetAddress extends Command {
       newAddress = this.bchjs.SLP.Address.toSLPAddress(newAddress)
     }
 
-    return newAddress
+    return { newAddress, newWalletInfo: walletInfo }
+  }
+
+  // Update the wallet JSON file to point to the next address the next time
+  // this function is called.
+  async updateWalletFile (inObj = {}) {
+    const { filename, walletInfo } = inObj
+
+    // Update the wallet file.
+    await this.appUtils.saveWallet(filename, walletInfo)
   }
 
   // Validate the proper flags are passed in.

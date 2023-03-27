@@ -1,24 +1,22 @@
 /*
-  TODO:
+  Unit tests for the get-address command.
 */
 
-'use strict'
-
+// Global npm libraries
 const assert = require('chai').assert
 const sinon = require('sinon')
-
-const CreateWallet = require('../../src/commands/create-wallet')
-const GetAddress = require('../../src/commands/get-address')
-const config = require('../../config')
-
-const { bitboxMock } = require('../mocks/bitbox')
-
-const filename = `${__dirname.toString()}/../../wallets/test123.json`
-
 const fs = require('fs')
 
+// Local libraries
+const CreateWallet = require('../../src/commands/create-wallet')
+const GetAddress = require('../../src/commands/get-address')
+// const config = require('../../config')
+const { bitboxMock } = require('../mocks/bitbox')
+const filename = `${__dirname.toString()}/../../wallets/test123.json`
+// const AppUtils = require('../../src/util')
+
 // Set default environment variables for unit tests.
-if (!process.env.TEST) process.env.TEST = 'unit'
+// if (!process.env.TEST) process.env.TEST = 'unit'
 
 const deleteFile = () => {
   const prom = new Promise((resolve, reject) => {
@@ -33,10 +31,12 @@ describe('get-address', () => {
   let bchjs
   let getAddress
   let sandbox
+  // let appUtils
 
   beforeEach(async () => {
     sandbox = sinon.createSandbox()
     getAddress = new GetAddress()
+    // appUtils = new AppUtils()
 
     // By default, use the mocking library instead of live calls.
     bchjs = bitboxMock
@@ -49,139 +49,49 @@ describe('get-address', () => {
   })
 
   describe('#getAddress()', () => {
-    // getAddress can be called directly by other programs, so this is tested separately.
-    it('should throw error if name is not supplied.', async () => {
-      try {
-        await getAddress.getAddress(undefined)
-
-        assert.fail('Unexpected result')
-      } catch (err) {
-        assert.include(err.message, 'Could not open', 'Expected error message.')
-      }
-    })
-
-    it('should throw error if wallet file not found.', async () => {
-      try {
-        await getAddress.getAddress('doesnotexist')
-
-        assert.fail('Unexpected result')
-      } catch (err) {
-        assert.include(err.message, 'Could not open', 'Expected error message.')
-      }
-    })
-
     it('increments the nextAddress property of the wallet.', async () => {
-      // Use the real library if this is not a unit test
-      if (process.env.TEST !== 'unit') {
-        getAddress.bchjs = new config.BCHLIB({ restURL: config.TESTNET_REST })
-      }
-
-      // Create a testnet wallet
+      // Create a wallet
       const createWallet = new CreateWallet()
-      const initialWalletInfo = await createWallet.createWallet(
-        filename,
-        'testnet'
-      )
+      const initialWalletInfo = await createWallet.createWallet(filename)
 
       // Record the initial nextAddress property. This is going to be 1 for a new wallet.
-      const firstAddressIndex = initialWalletInfo.nextAddress
+      // const firstAddressIndex = initialWalletInfo.nextAddress
 
       // Generate a new address
-      await getAddress.getAddress(filename)
+      const result = await getAddress.getAddress({ walletInfo: initialWalletInfo, flags: {} })
+      // console.log('result: ', result)
 
-      // Delete the cached copy of the wallet. This allows testing of list-wallets.
-      delete require.cache[require.resolve('../../wallets/test123')]
-
-      // Read in the wallet file.
-      const walletInfo = require('../../wallets/test123')
-
-      assert.equal(
-        walletInfo.nextAddress,
-        firstAddressIndex + 1,
-        'nextAddress property should increment'
-      )
-    })
-
-    it('returns a testnet cash address', async () => {
-      // Use the real library if this is not a unit test
-      if (process.env.TEST !== 'unit') {
-        getAddress.bchjs = new config.BCHLIB({ restURL: config.TESTNET_REST })
-      }
-
-      // Create a testnet wallet
-      const createWallet = new CreateWallet()
-      await createWallet.createWallet(filename, 'testnet')
-
-      // Generate a new address
-      const addr = await getAddress.getAddress(filename)
-
-      const index = addr.indexOf('bchtest:')
-
-      assert.isAbove(index, -1, 'testnet address')
-    })
-
-    it('returns a testnet simpleledger address', async () => {
-      // Use the real library if this is not a unit test
-      if (process.env.TEST !== 'unit') {
-        getAddress.bchjs = new config.BCHLIB({ restURL: config.TESTNET_REST })
-      }
-
-      // Create a testnet wallet
-      const createWallet = new CreateWallet()
-      await createWallet.createWallet(filename, 'testnet')
-
-      const flags = {
-        token: true
-      }
-
-      // Generate a new address
-      const addr = await getAddress.getAddress(filename, flags)
-      // console.log(`addr: ${addr}`)
-
-      const index = addr.indexOf('slptest:')
-
-      assert.isAbove(index, -1, 'testnet address')
+      // Assert that the nextAddress property has been incremented.
+      assert.equal(result.newWalletInfo.nextAddress, 2)
     })
 
     it('returns a cash address', async () => {
-      // Use the real library if this is not a unit test
-      if (process.env.TEST !== 'unit') {
-        getAddress.bchjs = new config.BCHLIB({ restURL: config.MAINNET_REST })
-      }
-
       // Create a testnet wallet
       const createWallet = new CreateWallet()
-      await createWallet.createWallet(filename)
+      const initialWalletInfo = await createWallet.createWallet(filename)
 
       // Generate a new address
-      const addr = await getAddress.getAddress(filename)
+      const { newAddress } = await getAddress.getAddress({ walletInfo: initialWalletInfo, flags: {} })
 
-      const index = addr.indexOf('bitcoincash:')
-
-      assert.isAbove(index, -1, 'mainnet address')
+      // Assert that the returned address is mainnet address.
+      assert.include(newAddress, 'bitcoincash:')
     })
 
     it('returns a simpleledger address', async () => {
-      // Use the real library if this is not a unit test
-      if (process.env.TEST !== 'unit') {
-        getAddress.bchjs = new config.BCHLIB({ restURL: config.MAINNET_REST })
-      }
-
       // Create a testnet wallet
       const createWallet = new CreateWallet()
-      await createWallet.createWallet(filename)
+      const initialWalletInfo = await createWallet.createWallet(filename)
 
       const flags = {
         token: true
       }
 
       // Generate a new address
-      const addr = await getAddress.getAddress(filename, flags)
-      // console.log(`addr: ${addr}`)
+      const result = await getAddress.getAddress({ walletInfo: initialWalletInfo, flags })
+      // console.log(`result: `, result)
 
-      const index = addr.indexOf('simpleledger:')
-
-      assert.isAbove(index, -1, 'mainnet address')
+      // Assert that the returned address is SLP address.
+      assert.include(result.newAddress, 'simpleledger:')
     })
   })
 
@@ -213,45 +123,16 @@ describe('get-address', () => {
 
       sandbox.stub(getAddress, 'parse').returns({ flags: flags })
 
+      // Reduce screen spam
+      sandbox.stub(getAddress.qrcode, 'generate').returns()
+      sandbox.stub(getAddress, 'log').returns()
+
       const addr = await getAddress.run()
       const index = addr.indexOf('bitcoincash:')
       assert.isAbove(index, -1, 'cash address')
     })
 
-    it('should run the run() function with testnet', async () => {
-      const flags = {
-        name: 'test123'
-      }
-      // Mock methods that will be tested elsewhere.
-      const createWallet = new CreateWallet()
-      await createWallet.createWallet(filename, 'testnet')
-
-      sandbox.stub(getAddress, 'parse').returns({ flags: flags })
-
-      const addr = await getAddress.run()
-      const index = addr.indexOf('bchtest:')
-
-      assert.isAbove(index, -1, 'cash address')
-    })
-
-    it('should run the run() function with testnet backend', async () => {
-      const flags = {
-        name: 'test123',
-        testnet: true
-      }
-
-      // Mock methods that will be tested elsewhere.
-      const createWallet = new CreateWallet()
-      await createWallet.createWallet(filename, 'testnet')
-      sandbox.stub(getAddress, 'parse').returns({ flags: flags })
-
-      const addr = await getAddress.run()
-
-      const index = addr.indexOf('bchtest:')
-      assert.isAbove(index, -1, 'testnet address')
-    })
-
-    it('should return error.message on empty flags', async () => {
+    it('should return error message on empty flags', async () => {
       sandbox.stub(getAddress, 'parse').returns({ flags: {} })
 
       const result = await getAddress.run()
@@ -265,7 +146,7 @@ describe('get-address', () => {
       sandbox.stub(getAddress, 'parse').throws({})
 
       const result = await getAddress.run()
-      console.log('result: ', result)
+      // console.log('result: ', result)
 
       assert.equal(result, 0)
     })
