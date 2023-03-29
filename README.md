@@ -206,7 +206,6 @@ USAGE
 
 OPTIONS
   -a, --sendAddr=sendAddr  Cash address to send to
-  -i, --ignoreTokens       Ignore and burn tokens
   -n, --name=name          Name of wallet
 
 DESCRIPTION
