@@ -86,6 +86,7 @@ USAGE
 * [`hd-cli-wallet remove-wallet`](#hd-cli-wallet-remove-wallet)
 * [`hd-cli-wallet send`](#hd-cli-wallet-send)
 * [`hd-cli-wallet send-all`](#hd-cli-wallet-send-all)
+* [`hd-cli-wallet split-utxo`](#hd-cli-wallet-split-utxo)
 * [`hd-cli-wallet update-balances`](#hd-cli-wallet-update-balances)
 
 ## `hd-cli-wallet coinjoin-single`
@@ -218,6 +219,20 @@ DESCRIPTION
 ```
 
 _See code: [src/commands/send-all.js](https://github.com/bch-coinjoin/hd-cli-wallet/blob/v1.0.1/src/commands/send-all.js)_
+
+## `hd-cli-wallet split-utxo`
+
+Send an amount of BCH
+
+```
+USAGE
+  $ hd-cli-wallet split-utxo
+
+OPTIONS
+  -n, --name=name  Name of wallet
+```
+
+_See code: [src/commands/split-utxo.js](https://github.com/bch-coinjoin/hd-cli-wallet/blob/v1.0.1/src/commands/split-utxo.js)_
 
 ## `hd-cli-wallet update-balances`
 
