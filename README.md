@@ -78,44 +78,15 @@ USAGE
 # Commands
 
 <!-- commands -->
-* [`hd-cli-wallet burn-tokens`](#hd-cli-wallet-burn-tokens)
 * [`hd-cli-wallet coinjoin-single`](#hd-cli-wallet-coinjoin-single)
 * [`hd-cli-wallet create-wallet`](#hd-cli-wallet-create-wallet)
-* [`hd-cli-wallet derivation`](#hd-cli-wallet-derivation)
 * [`hd-cli-wallet get-address`](#hd-cli-wallet-get-address)
-* [`hd-cli-wallet get-key`](#hd-cli-wallet-get-key)
 * [`hd-cli-wallet help [COMMAND]`](#hd-cli-wallet-help-command)
 * [`hd-cli-wallet list-wallets`](#hd-cli-wallet-list-wallets)
-* [`hd-cli-wallet nft-create-child`](#hd-cli-wallet-nft-create-child)
-* [`hd-cli-wallet nft-create-group`](#hd-cli-wallet-nft-create-group)
-* [`hd-cli-wallet nft-list-addr`](#hd-cli-wallet-nft-list-addr)
-* [`hd-cli-wallet nft-list-tokens`](#hd-cli-wallet-nft-list-tokens)
-* [`hd-cli-wallet nft-remove-child`](#hd-cli-wallet-nft-remove-child)
-* [`hd-cli-wallet old-update-balances`](#hd-cli-wallet-old-update-balances)
 * [`hd-cli-wallet remove-wallet`](#hd-cli-wallet-remove-wallet)
-* [`hd-cli-wallet scan-funds`](#hd-cli-wallet-scan-funds)
 * [`hd-cli-wallet send`](#hd-cli-wallet-send)
 * [`hd-cli-wallet send-all`](#hd-cli-wallet-send-all)
-* [`hd-cli-wallet send-tokens`](#hd-cli-wallet-send-tokens)
-* [`hd-cli-wallet sign-message`](#hd-cli-wallet-sign-message)
-* [`hd-cli-wallet sweep`](#hd-cli-wallet-sweep)
 * [`hd-cli-wallet update-balances`](#hd-cli-wallet-update-balances)
-
-## `hd-cli-wallet burn-tokens`
-
-Burn SLP tokens.
-
-```
-USAGE
-  $ hd-cli-wallet burn-tokens
-
-OPTIONS
-  -n, --name=name        Name of wallet
-  -q, --qty=qty
-  -t, --tokenId=tokenId  Token ID
-```
-
-_See code: [src/commands/burn-tokens.js](https://github.com/bch-coinjoin/hd-cli-wallet/blob/v1.0.1/src/commands/burn-tokens.js)_
 
 ## `hd-cli-wallet coinjoin-single`
 
@@ -151,32 +122,6 @@ OPTIONS
 
 _See code: [src/commands/create-wallet.js](https://github.com/bch-coinjoin/hd-cli-wallet/blob/v1.0.1/src/commands/create-wallet.js)_
 
-## `hd-cli-wallet derivation`
-
-Display or set the derivation path used by the wallet.
-
-```
-USAGE
-  $ hd-cli-wallet derivation
-
-OPTIONS
-  -n, --name=name  name to print
-  -s, --save=save  save a new derivation path
-
-DESCRIPTION
-  This command is used to display the derivation path used by the wallet. The -s
-  flag can be used to save a new derivation path.
-
-  Common derivation paths used:
-  145 - BIP44 standard path for Bitcoin Cash
-  245 - BIP44 standard path for SLP tokens
-  0 - Used by common software like the Bitcoin.com wallet and Honest.cash
-
-  Wallets use the 245 derivation path by default.
-```
-
-_See code: [src/commands/derivation.js](https://github.com/bch-coinjoin/hd-cli-wallet/blob/v1.0.1/src/commands/derivation.js)_
-
 ## `hd-cli-wallet get-address`
 
 Generate a new address to recieve BCH.
@@ -192,20 +137,6 @@ OPTIONS
 ```
 
 _See code: [src/commands/get-address.js](https://github.com/bch-coinjoin/hd-cli-wallet/blob/v1.0.1/src/commands/get-address.js)_
-
-## `hd-cli-wallet get-key`
-
-Generate a new private/public key pair.
-
-```
-USAGE
-  $ hd-cli-wallet get-key
-
-OPTIONS
-  -n, --name=name  Name of wallet
-```
-
-_See code: [src/commands/get-key.js](https://github.com/bch-coinjoin/hd-cli-wallet/blob/v1.0.1/src/commands/get-key.js)_
 
 ## `hd-cli-wallet help [COMMAND]`
 
@@ -235,131 +166,6 @@ USAGE
 
 _See code: [src/commands/list-wallets.js](https://github.com/bch-coinjoin/hd-cli-wallet/blob/v1.0.1/src/commands/list-wallets.js)_
 
-## `hd-cli-wallet nft-create-child`
-
-Create NFT child
-
-```
-USAGE
-  $ hd-cli-wallet nft-create-child
-
-OPTIONS
-  -c, --child=child        Name of the child
-  -f, --funder=funder      Fee funder address index in the wallet
-  -g, --groupId=groupId    NFT Group ID
-  -h, --hash=hash          Document hash of the group
-  -i, --index=index        Address index in the wallet
-  -n, --name=name          Name of wallet
-  -r, --receiver=receiver  Address to send the token
-  -t, --ticker=ticker      Ticker of the child
-  -u, --url=url            Document URL of the group
-
-DESCRIPTION
-  ...
-  Will create NFT child token in a specified NFT group (groupId parameter)
-```
-
-_See code: [src/commands/nft-create-child.js](https://github.com/bch-coinjoin/hd-cli-wallet/blob/v1.0.1/src/commands/nft-create-child.js)_
-
-## `hd-cli-wallet nft-create-group`
-
-Create NFT Group
-
-```
-USAGE
-  $ hd-cli-wallet nft-create-group
-
-OPTIONS
-  -a, --amount=amount
-  -f, --funder=funder  Fee funder address index in the wallet
-  -g, --group=group    Name of the group
-  -h, --hash=hash      Document hash of the group
-  -i, --index=index    Address index in the wallet
-  -n, --name=name      Name of wallet
-  -t, --ticker=ticker  Ticker of the group
-  -u, --url=url        Document URL of the group
-
-DESCRIPTION
-  ...
-  Will create NFT group with specified name, ticker and amount
-```
-
-_See code: [src/commands/nft-create-group.js](https://github.com/bch-coinjoin/hd-cli-wallet/blob/v1.0.1/src/commands/nft-create-group.js)_
-
-## `hd-cli-wallet nft-list-addr`
-
-List addresses inside the wallet
-
-```
-USAGE
-  $ hd-cli-wallet nft-list-addr
-
-OPTIONS
-  -n, --name=name  Name of wallet
-
-DESCRIPTION
-  ...
-  Will return a list of available addresses
-```
-
-_See code: [src/commands/nft-list-addr.js](https://github.com/bch-coinjoin/hd-cli-wallet/blob/v1.0.1/src/commands/nft-list-addr.js)_
-
-## `hd-cli-wallet nft-list-tokens`
-
-List NFT tokens in a wallet address
-
-```
-USAGE
-  $ hd-cli-wallet nft-list-tokens
-
-OPTIONS
-  -g, --groups       List only NFT groups
-  -i, --index=index  Address index in the wallet
-  -n, --name=name    Name of wallet
-
-DESCRIPTION
-  ...
-  Will return a JSON formated list of available NFT tokens
-```
-
-_See code: [src/commands/nft-list-tokens.js](https://github.com/bch-coinjoin/hd-cli-wallet/blob/v1.0.1/src/commands/nft-list-tokens.js)_
-
-## `hd-cli-wallet nft-remove-child`
-
-Remove NFT child token
-
-```
-USAGE
-  $ hd-cli-wallet nft-remove-child
-
-OPTIONS
-  -f, --funder=funder    Fee funder address index in the wallet
-  -i, --index=index      Address index in the wallet
-  -n, --name=name        Name of wallet
-  -t, --tokenId=tokenId  NFT child tokenId
-
-DESCRIPTION
-  ...
-  Will remove NFT child token (type = 65) with specified tokenId
-```
-
-_See code: [src/commands/nft-remove-child.js](https://github.com/bch-coinjoin/hd-cli-wallet/blob/v1.0.1/src/commands/nft-remove-child.js)_
-
-## `hd-cli-wallet old-update-balances`
-
-Poll the network and update the balances of the wallet.
-
-```
-USAGE
-  $ hd-cli-wallet old-update-balances
-
-OPTIONS
-  -i, --ignoreTokens  Ignore and burn tokens
-  -n, --name=name     Name of wallet
-```
-
-_See code: [src/commands/old-update-balances.js](https://github.com/bch-coinjoin/hd-cli-wallet/blob/v1.0.1/src/commands/old-update-balances.js)_
-
 ## `hd-cli-wallet remove-wallet`
 
 Remove an existing wallet.
@@ -373,30 +179,6 @@ OPTIONS
 ```
 
 _See code: [src/commands/remove-wallet.js](https://github.com/bch-coinjoin/hd-cli-wallet/blob/v1.0.1/src/commands/remove-wallet.js)_
-
-## `hd-cli-wallet scan-funds`
-
-Scans first 20 addresses of each derivation path for
-
-```
-USAGE
-  $ hd-cli-wallet scan-funds
-
-OPTIONS
-  -m, --mnemonic=mnemonic  mnemonic phrase to generate addresses, wrapped in quotes
-
-DESCRIPTION
-  history and balance of the given mnemonic. If any of them had a history, scans
-  the next 20, until it reaches a batch of 20 addresses with no history. The -m
-  flag is used to pass it a mnemonic phrase.
-
-  Derivation pathes used:
-  145 - BIP44 standard path for Bitcoin Cash
-  245 - BIP44 standard path for SLP tokens
-  0 - Used by common software like the Bitcoin.com wallet and Honest.cash
-```
-
-_See code: [src/commands/scan-funds.js](https://github.com/bch-coinjoin/hd-cli-wallet/blob/v1.0.1/src/commands/scan-funds.js)_
 
 ## `hd-cli-wallet send`
 
@@ -437,63 +219,6 @@ DESCRIPTION
 ```
 
 _See code: [src/commands/send-all.js](https://github.com/bch-coinjoin/hd-cli-wallet/blob/v1.0.1/src/commands/send-all.js)_
-
-## `hd-cli-wallet send-tokens`
-
-Send SLP tokens.
-
-```
-USAGE
-  $ hd-cli-wallet send-tokens
-
-OPTIONS
-  -a, --sendAddr=sendAddr  Cash or SimpleLedger address to send to
-  -n, --name=name          Name of wallet
-  -q, --qty=qty
-  -t, --tokenId=tokenId    Token ID
-```
-
-_See code: [src/commands/send-tokens.js](https://github.com/bch-coinjoin/hd-cli-wallet/blob/v1.0.1/src/commands/send-tokens.js)_
-
-## `hd-cli-wallet sign-message`
-
-Sign message
-
-```
-USAGE
-  $ hd-cli-wallet sign-message
-
-OPTIONS
-  -i, --sendAddrIndex=sendAddrIndex  Address index
-  -m, --message=message              Message to sign. (Wrap in quotes)
-  -n, --name=name                    Name of wallet
-```
-
-_See code: [src/commands/sign-message.js](https://github.com/bch-coinjoin/hd-cli-wallet/blob/v1.0.1/src/commands/sign-message.js)_
-
-## `hd-cli-wallet sweep`
-
-Sweep a private key
-
-```
-USAGE
-  $ hd-cli-wallet sweep
-
-OPTIONS
-  -a, --address=address  Address to sweep funds to.
-  -b, --balanceOnly      Balance only, no claim.
-  -i, --tokenId=tokenId  The token ID to sweep when there are multiple tokens
-  -t, --testnet          Testnet
-  -w, --wif=wif          WIF private key
-
-DESCRIPTION
-  ...
-  Sweeps a private key in WIF format.
-  Supports SLP token sweeping, but only one token class at a time. It will throw
-  an error if a WIF contains more than one class of token.
-```
-
-_See code: [src/commands/sweep.js](https://github.com/bch-coinjoin/hd-cli-wallet/blob/v1.0.1/src/commands/sweep.js)_
 
 ## `hd-cli-wallet update-balances`
 

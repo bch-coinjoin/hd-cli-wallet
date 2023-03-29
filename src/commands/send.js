@@ -90,7 +90,6 @@ class Send extends Command {
       // Generate a new address, for sending change to.
       const getAddress = new GetAddress()
       getAddress.bchjs = this.bchjs
-      // const changeAddress = await getAddress.getAddress(filename)
       const addrData = await getAddress.getAddress({ flags, walletInfo })
       const changeAddress = addrData.newAddress
       walletInfo = addrData.newWalletInfo
