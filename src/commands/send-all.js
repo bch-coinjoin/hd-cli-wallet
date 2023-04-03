@@ -78,19 +78,22 @@ class SendAll extends Command {
       // console.log(`walletInfo: ${JSON.stringify(walletInfo, null, 2)}`)
 
       // Update balances before sending.
-      const updateBalances = new UpdateBalances(undefined, {
-        bchjs: this.bchjs
-      })
+      // const updateBalances = new UpdateBalances(undefined, {
+      //   bchjs: this.bchjs
+      // })
+      // walletInfo = await updateBalances.updateBalances(flags)
+      const updateBalances = new UpdateBalances()
       walletInfo = await updateBalances.updateBalances(flags)
+      console.log('walletInfo: ', JSON.stringify(walletInfo, null, 2))
 
       // Get all UTXOs controlled by this wallet.
-      let utxos = walletInfo.BCHUtxos
+      const utxos = walletInfo.bchUtxos
 
       // Burn tokens if the -i flag is used.
-      if (flags.ignoreTokens) {
-        // console.log(`walletInfo: ${JSON.stringify(walletInfo, null, 2)}`)
-        utxos = walletInfo.BCHUtxos.concat(walletInfo.SLPUtxos)
-      }
+      // if (flags.ignoreTokens) {
+      //   // console.log(`walletInfo: ${JSON.stringify(walletInfo, null, 2)}`)
+      //   utxos = walletInfo.bchUtxos.concat(walletInfo.SLPUtxos)
+      // }
 
       // console.log(`utxos: ${util.inspect(utxos)}`)
 
@@ -104,9 +107,7 @@ class SendAll extends Command {
 
       // Display link to block explorer.
       console.log('View on block explorer:')
-      if (walletInfo.network === 'testnet') {
-        console.log(`https://explorer.bitcoin.com/tbch/tx/${txid}`)
-      } else console.log(`https://explorer.bitcoin.com/bch/tx/${txid}`)
+      console.log(`https://blockchair.com/bitcoin-cash/transaction/${txid}`)
     } catch (err) {
       // if (err.message) console.log(err.message)
       // else console.log(`Error in .run: `, err)
@@ -132,14 +133,16 @@ class SendAll extends Command {
       let originalAmount = 0
       let numUtxos = 0
 
+      console.log(`utxos: ${JSON.stringify(utxos, null, 2)}`)
+
       // Calulate the original amount in the wallet and add all UTXOs to the
       // transaction builder.
       for (let i = 0; i < utxos.length; i++) {
         // Loop through each address.
         const addr = utxos[i]
-        for (let j = 0; j < addr.utxos.length; j++) {
+        for (let j = 0; j < addr.bchUtxos.length; j++) {
           // Loop through each UTXO in the address.
-          const utxo = addr.utxos[j]
+          const utxo = addr.bchUtxos[j]
           // console.log(`utxo: ${JSON.stringify(utxo, null, 2)}`)
 
           originalAmount = originalAmount + utxo.value
@@ -178,20 +181,22 @@ class SendAll extends Command {
       let redeemScript
       let inputCnt = 0
 
+      console.log(`utxos: ${JSON.stringify(utxos, null, 2)}`)
+
       // Loop through each input and sign
       // Loop through each address.
       for (let i = 0; i < utxos.length; i++) {
         const addr = utxos[i]
 
         // Loop through each utxo within the address.
-        for (let j = 0; j < addr.utxos.length; j++) {
-          const utxo = addr.utxos[j]
+        for (let j = 0; j < addr.bchUtxos.length; j++) {
+          const utxo = addr.bchUtxos[j]
           // console.log(`utxo: ${JSON.stringify(utxo, null, 2)}`)
 
           // Generate a keypair for the current address.
           const change = await this.appUtils.changeAddrFromMnemonic(
             walletInfo,
-            utxo.hdIndex
+            addr.hdIndex
           )
           const keyPair = this.bchjs.HDNode.toKeyPair(change)
 
@@ -249,11 +254,11 @@ https://bit.ly/2TnhdVc
 
 SendAll.flags = {
   name: flags.string({ char: 'n', description: 'Name of wallet' }),
-  sendAddr: flags.string({ char: 'a', description: 'Cash address to send to' }),
-  ignoreTokens: flags.boolean({
-    char: 'i',
-    description: 'Ignore and burn tokens'
-  })
+  sendAddr: flags.string({ char: 'a', description: 'Cash address to send to' })
+  // ignoreTokens: flags.boolean({
+  //   char: 'i',
+  //   description: 'Ignore and burn tokens'
+  // })
 }
 
 module.exports = SendAll

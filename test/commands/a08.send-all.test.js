@@ -16,7 +16,8 @@ const SendAll = require('../../src/commands/send-all')
 // Mocking data
 const { bitboxMock } = require('../mocks/bitbox')
 const testwallet = require('../mocks/testwallet.json')
-const mockUtxos = require('../mocks/send-mocks')
+// const mockUtxos = require('../mocks/send-mocks')
+const utxoMocks = require('../mocks/utxos.mocks.js')
 
 // Inspect utility used for debugging.
 const util = require('util')
@@ -149,7 +150,8 @@ describe('Send All', () => {
     // })
 
     it('should send BCH on mainnet', async () => {
-      const utxos = mockUtxos.twoUtxos
+      // const utxos = mockUtxos.twoUtxos
+      const utxos = utxoMocks.utxos01
 
       const sendToAddr = 'bitcoincash:qryxufkckgdfe3cfykydez4fjjsk4p2c5usevl9lfa'
 

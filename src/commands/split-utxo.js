@@ -1,15 +1,7 @@
 /*
-  oclif command to send BCH to an address.
-
-  The spending of UTXOs is optimized for privacy. The UTXO selected is equal to
-  or bigger than the amount specified, but as close to it as possible. Change is
-  always sent to a new address.
-
-  This method of selecting UTXOs can leave a lot of dust UTXOs lying around in
-  the wallet. It is assumed the user will consolidate the dust UTXOs periodically
-  with an online service like Consolidating CoinJoin or CashShuffle, as
-  described here:
-  https://gist.github.com/christroutner/8d54597da652fe2affa5a7230664bc45
+  This command is useful for testing CoinJoins. It takes the largest UTXO in
+  a wallet and splits it into 5 randomly sized UTXOs. This prepares a wallet
+  for consolidating UTXOs via a CoinJoin.
 */
 
 // Global npm libraries
@@ -30,7 +22,7 @@ const bchjs = new config.BCHLIB({
   apiToken: config.JWT
 })
 
-class Send extends Command {
+class SplitUtxo extends Command {
   constructor (argv, config) {
     super(argv, config)
     // _this = this
@@ -43,14 +35,14 @@ class Send extends Command {
 
   async run () {
     try {
-      const { flags } = this.parse(Send)
+      const { flags } = this.parse(SplitUtxo)
 
       // Ensure flags meet qualifiying critieria.
       this.validateFlags(flags)
 
       const name = flags.name // Name of the wallet.
-      const bch = flags.bch // Amount to send in BCH.
-      const sendToAddr = flags.sendAddr // The address to send to.
+      // const bch = flags.bch // Amount to send in BCH.
+      // const sendToAddr = flags.sendAddr // The address to send to.
 
       // Open the wallet data file.
       const filename = `${__dirname.toString()}/../../wallets/${name}.json`
@@ -58,57 +50,73 @@ class Send extends Command {
       walletInfo.name = name
 
       // Determine if this is a testnet wallet or a mainnet wallet.
-      if (walletInfo.network === 'testnet') {
-        this.bchjs = new config.BCHLIB({ restURL: config.TESTNET_REST })
-        this.appUtils = new AppUtils({ bchjs: this.bchjs })
-      }
+      // if (walletInfo.network === 'testnet') {
+      //   this.bchjs = new config.BCHLIB({ restURL: config.TESTNET_REST })
+      //   this.appUtils = new AppUtils({ bchjs: this.bchjs })
+      // }
 
       // Update balances before sending.
-      const updateBalances = new UpdateBalances(undefined, {
-        bchjs: this.bchjs
-      })
+      const updateBalances = new UpdateBalances()
       updateBalances.bchjs = this.bchjs
-      walletInfo = await updateBalances.updateBalances(flags)
-      // console.log('walletInfo: ', JSON.stringify(walletInfo, null, 2))
 
-      // Get info on UTXOs controlled by this wallet.
-      // const utxos = await this.appUtils.getUTXOs(walletInfo)
-      const utxos = walletInfo.bchUtxos
-      // console.log(`send utxos: ${JSON.stringify(utxos, null, 2)}`)
+      for (let i = 0; i < 5; i++) {
+        walletInfo = await updateBalances.updateBalances(flags)
+        // console.log('walletInfo: ', JSON.stringify(walletInfo, null, 2))
 
-      // Select optimal UTXO
-      // const utxo = await this.selectUTXO(bch, utxos)
-      const utxo = await this.utxosLib.selectUtxo(bch, utxos)
-      console.log(`selected utxo: ${JSON.stringify(utxo, null, 2)}`)
+        // Get info on UTXOs controlled by this wallet.
+        // const utxos = await this.appUtils.getUTXOs(walletInfo)
+        const utxos = walletInfo.bchUtxos
+        // console.log(`send utxos: ${JSON.stringify(utxos, null, 2)}`)
 
-      // Exit if there is no UTXO big enough to fulfill the transaction.
-      if (!utxo.amount) {
-        this.log('Error: Could not find a UTXO big enough for this transaction. Send more BCH to the wallet, or consolidate UTXOs with CoinJoin.')
-        return
+        // Select optimal UTXO
+        // const utxo = await this.selectUTXO(bch, utxos)
+        const utxo = await this.selectUTXO(utxos)
+        console.log(`selected utxo: ${JSON.stringify(utxo, null, 2)}`)
+
+        // Exit if there is no UTXO big enough to fulfill the transaction.
+        if (!utxo.amount) {
+          this.log('Error: Could not find a UTXO big enough for this transaction. Send more BCH to the wallet, or consolidate UTXOs with CoinJoin.')
+          return
+        }
+
+        // Generate a new address, for sending change to.
+        const getAddress = new GetAddress()
+        getAddress.bchjs = this.bchjs
+        let addrData = await getAddress.getAddress({ flags, walletInfo })
+        const changeAddress = addrData.newAddress
+        walletInfo = addrData.newWalletInfo
+
+        // console.log(`changeAddress: ${changeAddress}`)
+
+        // Get address to send new UTXO to
+        addrData = await getAddress.getAddress({ flags, walletInfo })
+        const sendToAddr = addrData.newAddress
+        walletInfo = addrData.newWalletInfo
+
+        // Update the wallet file.
+        await getAddress.updateWalletFile({ filename, walletInfo })
+
+        // Calculate the amount of bch to send
+        const oneFifth = utxo.amount / 5
+        let bch = oneFifth * (1 - Math.random()) + 546
+        bch = this.bchjs.Util.floor8(bch)
+
+        // Send the BCH, transfer change to the new address
+        const hex = await this.sendBCH(
+          utxo,
+          bch,
+          changeAddress,
+          sendToAddr,
+          walletInfo
+        )
+        // console.log(`hex: ${hex}`)
+
+        const txid = await this.appUtils.broadcastTx(hex)
+
+        this.appUtils.displayTxid(txid, walletInfo.network)
+
+        await this.bchjs.Util.sleep(3000)
       }
-
-      // Generate a new address, for sending change to.
-      const getAddress = new GetAddress()
-      getAddress.bchjs = this.bchjs
-      const addrData = await getAddress.getAddress({ flags, walletInfo })
-      const changeAddress = addrData.newAddress
-      walletInfo = addrData.newWalletInfo
-      await getAddress.updateWalletFile({ filename, walletInfo })
-      // console.log(`changeAddress: ${changeAddress}`)
-
-      // Send the BCH, transfer change to the new address
-      const hex = await this.sendBCH(
-        utxo,
-        bch,
-        changeAddress,
-        sendToAddr,
-        walletInfo
-      )
-      // console.log(`hex: ${hex}`)
-
-      const txid = await this.appUtils.broadcastTx(hex)
-
-      this.appUtils.displayTxid(txid, walletInfo.network)
     } catch (err) {
       // if (err.message) console.log(err.message)
       // else console.log(`Error in .run: `, err)
@@ -210,17 +218,11 @@ class Send extends Command {
     }
   }
 
-  // Selects a UTXO from an array of UTXOs based on this optimization criteria:
-  // 1. The UTXO must be larger than or equal to the amount of BCH to send.
-  // 2. The UTXO should be as close to the amount of BCH as possible.
-  //    i.e. as small as possible
-  // 3. Full node must validate that the UTXO has not been spent.
-  // Returns a single UTXO object.
-  async selectUTXO (bch, utxos) {
+  // Selects the largest UTXO in the wallet.
+  async selectUTXO (utxos) {
     let candidateUTXO = {}
 
-    const bchSatoshis = bch * 100000000
-    const total = bchSatoshis + 250 // Add 250 satoshis to cover TX fee.
+    let total = 0
 
     // console.log(`utxos: ${JSON.stringify(utxos, null, 2)}`)
 
@@ -229,8 +231,10 @@ class Send extends Command {
       const thisAddr = utxos[i]
 
       // Loop through each UTXO for each address.
-      for (let j = 0; j < thisAddr.utxos.length; j++) {
-        const thisUTXO = thisAddr.utxos[j]
+      for (let j = 0; j < thisAddr.bchUtxos.length; j++) {
+        const thisUTXO = thisAddr.bchUtxos[j]
+
+        thisUTXO.hdIndex = thisAddr.hdIndex
 
         // Ensure the Electrumx or Blockbook UTXO has a satoshis property.
         if (thisUTXO.value && !thisUTXO.satoshis) {
@@ -241,29 +245,9 @@ class Send extends Command {
         if (thisUTXO.satoshis >= total) {
           // console.log(`thisUtxo: ${JSON.stringify(thisUTXO, null, 2)}`)
 
-          // Skip if the UTXO is invalid
-          const isValid = await this.appUtils.isValidUtxo(thisUTXO)
-          if (!isValid) {
-            console.log(
-              'warning: invalid UTXO found. You may need to wait for the indexer to catch up.'
-            )
-            // console.log(`thisUTXO: ${JSON.stringify(thisUTXO, null, 2)}`)
-            continue
-          }
-          // console.log(`isValid: `, isValid)
+          candidateUTXO = thisUTXO
 
-          // Skip if change would less than the dust amount.
-          if (thisUTXO.satoshis - bchSatoshis < 546) continue
-
-          // Automatically assign if the candidateUTXO is an empty object.
-          if (!candidateUTXO.satoshis) {
-            candidateUTXO = thisUTXO
-            continue
-
-            // Replace the candidate if the current UTXO is closer to the send amount.
-          } else if (candidateUTXO.satoshis > thisUTXO.satoshis) {
-            candidateUTXO = thisUTXO
-          }
+          total = thisUTXO.satoshis
         }
       }
     }
@@ -283,26 +267,14 @@ class Send extends Command {
       throw new Error('You must specify a wallet with the -n flag.')
     }
 
-    const bch = flags.bch
-    if (isNaN(Number(bch))) {
-      throw new Error('You must specify a quantity in BCH with the -b flag.')
-    }
-
-    const sendAddr = flags.sendAddr
-    if (!sendAddr || sendAddr === '') {
-      throw new Error('You must specify a send-to address with the -a flag.')
-    }
-
     return true
   }
 }
 
-Send.description = 'Send an amount of BCH'
+SplitUtxo.description = 'Send an amount of BCH'
 
-Send.flags = {
-  name: flags.string({ char: 'n', description: 'Name of wallet' }),
-  bch: flags.string({ char: 'b', description: 'Quantity in BCH' }),
-  sendAddr: flags.string({ char: 'a', description: 'Cash address to send to' })
+SplitUtxo.flags = {
+  name: flags.string({ char: 'n', description: 'Name of wallet' })
 }
 
-module.exports = Send
+module.exports = SplitUtxo
