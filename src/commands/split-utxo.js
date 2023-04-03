@@ -98,7 +98,7 @@ class SplitUtxo extends Command {
 
         // Calculate the amount of bch to send
         const oneFifth = utxo.amount / 5
-        let bch = oneFifth * (1 - Math.random())
+        let bch = oneFifth * (1 - Math.random()) + 546
         bch = this.bchjs.Util.floor8(bch)
 
         // Send the BCH, transfer change to the new address
